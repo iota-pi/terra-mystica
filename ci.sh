@@ -38,7 +38,7 @@ if [[ "${1:-}" == "up" ]]; then
   if [[ -n ${2:-} ]]; then
     ./dc.sh up -d "${@:2}"
   else
-    ./dc.sh up -d application
+    ./dc.sh up -d app
   fi
 fi
 
@@ -48,10 +48,10 @@ fi
 
 if [[ "${1:-}" =~ (py)?test ]]; then
   DOCKER_MAIN="${DOCKER_TEST}" \
-  ./dc.sh run --rm application python -m pytest "${@:2}"
+  ./dc.sh run --rm app python -m pytest "${@:2}"
 fi
 
 if [[ "${1:-}" == "black" ]]; then
   DOCKER_MAIN="${DOCKER_TEST}" \
-  ./dc.sh run --rm application python -m black --check --diff .
+  ./dc.sh run --rm app python -m black --check --diff .
 fi

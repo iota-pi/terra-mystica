@@ -1,13 +1,14 @@
 ---
 version: "3.3"
 services:
-  application:
+  app:
     image: ${DOCKER_MAIN}
     ports:
       - 8080
     volumes:
       - ./src:/${APP_NAME}
     working_dir: /${APP_NAME}
+    command: python main.py
 
   poetry:
     image: ${PYTHON_POETRY}
