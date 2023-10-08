@@ -42,20 +42,6 @@ if [[ "${1:-}" == "up" ]]; then
   fi
 fi
 
-if [[ "${1:-}" == "mongo" ]]; then
-  ./dc.sh run --rm mongo \
-    mongo $MONGO_DATABASE \
-      --host mongo \
-      --authenticationDatabase admin \
-      -u $MONGO_USERNAME \
-      -p $MONGO_PASSWORD \
-      ;
-fi
-
-if [[ "${1:-}" == "psql" ]]; then
-  ./dc.sh run --rm postgres psql
-fi
-
 if [[ "${1:-}" == "poetry" ]]; then
   ./dc.sh run --rm poetry "poetry ${@:2}"
 fi
