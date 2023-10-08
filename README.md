@@ -1,3 +1,17 @@
-# Python Base
+# Terra Mystica
 
-This is a simple Python starter template for new Python projects using Docker and Poetry.
+## Getting started
+
+Open a bash shell and run:
+
+```
+./ci.sh build
+```
+
+Then, if using VS Code, use the reopen in container command.
+
+To test it, run:
+
+```
+docker compose run app
+```
