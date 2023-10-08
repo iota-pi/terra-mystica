@@ -3,7 +3,9 @@ set -euo pipefail
 cd "$(dirname "$(realpath "$0")")"
 
 source .env
-source .secrets.*
+if [[ -f .secrets.* ]]; then
+  source .secrets.*
+fi
 
 if [[ "${1:-}" == "build" ]]; then
   docker build \

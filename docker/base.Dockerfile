@@ -1,4 +1,4 @@
-FROM python:3.9-slim as python-base
+FROM python:3.12-slim as python-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_NO_CACHE_DIR=off

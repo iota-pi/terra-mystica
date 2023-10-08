@@ -2,6 +2,8 @@
 set -euo pipefail
 
 set -a
-source .secrets.*
+if [[ -f .secrets.* ]]; then
+  source .secrets.*
+fi
 set +a
 docker-compose $@
