@@ -11,7 +11,7 @@ RUN --mount=type=cache,mode=0755,target=/root/.cache/pip \
 
 FROM ${base_image} as runtime
 
-COPY --from=poetry $VENV_PATH $VENV_PATH
+COPY --from=poetry $VIRTUAL_ENV $VIRTUAL_ENV
 
 ARG app_name
 COPY ./src /${app_name}

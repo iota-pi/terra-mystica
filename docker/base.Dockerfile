@@ -3,8 +3,8 @@ FROM python:3.12-slim as python-base
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_NO_CACHE_DIR=off
 ENV PIP_DISABLE_PIP_VERSION_CHECK=on
-ENV VENV_PATH=/opt/venv
-ENV PATH="$VENV_PATH/bin:$PATH"
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 ARG app_name
 ARG username=appuser

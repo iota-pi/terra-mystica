@@ -5,7 +5,6 @@ FROM ${venv_image}
 USER root
 COPY poetry.lock pyproject.toml ./
 RUN --mount=type=cache,mode=0755,target=/root/.cache/pip \
-  . $VENV_PATH/bin/activate && \
   poetry install --no-interaction
 
 ARG username=appuser

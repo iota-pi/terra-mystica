@@ -16,7 +16,7 @@ ENV PATH="$POETRY_HOME/bin:$PATH"
 # Install poetry
 RUN curl -sSL https://install.python-poetry.org | python
 
-RUN python -m venv $VENV_PATH
+RUN python -m venv "$VIRTUAL_ENV"
 
 ARG username=appuser
 USER ${username}
