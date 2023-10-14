@@ -14,5 +14,11 @@ class Tile:
             self.building = building
 
     def can_build(self, building: Building) -> None:
-        # TODO
-        pass
+        if self.building >= building:
+            return False
+        if self.building == None and building == 1:
+            return True
+        if self.building == 2 and building == 4:
+            return True
+        if self.building + 1 == building:
+            return True
