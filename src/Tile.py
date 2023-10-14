@@ -13,12 +13,18 @@ class Tile:
         if self.can_build(building):
             self.building = building
 
-    def can_build(self, building: Building) -> None:
-        if self.building >= building:
+    def can_build(self, building: Building) -> bool:
+        if self.building is None and building == Building.DWELLING:
+            return True
+        if self.building is None:
             return False
-        if self.building == None and building == 1:
+        if self.building == Building.DWELLING and building == Building.TRADING_HOUSE:
             return True
-        if self.building == 2 and building == 4:
+        if self.building == Building.TRADING_HOUSE:
+            if building == Building.STRONGHOLD:
+                return True
+            if building == Building.TEMPLE:
+                return True
+        if self.building == Building.TEMPLE and building == Building.SANCTUARY:
             return True
-        if self.building + 1 == building:
-            return True
+        return False
