@@ -51,7 +51,12 @@ if [[ "${1:-}" =~ (py)?test ]]; then
   ./dc.sh run --rm app python -m pytest "${@:2}"
 fi
 
-if [[ "${1:-}" == "black" ]]; then
+if [[ "${1:-}" == "format" ]]; then
+  DOCKER_MAIN="${DOCKER_TEST}" \
+  ./dc.sh run --rm app python -m black .
+fi
+
+if [[ "${1:-}" == "check-format" ]]; then
   DOCKER_MAIN="${DOCKER_TEST}" \
   ./dc.sh run --rm app python -m black --check --diff .
 fi
