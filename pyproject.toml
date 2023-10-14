@@ -13,6 +13,9 @@ pytest = "^7.4.2"
 mypy = "^1.5.1"
 pylama = "^8.4.1"
 
+[tool.poetry.group.dev.dependencies]
+setuptools = "^68.2.2"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
