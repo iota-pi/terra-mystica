@@ -1,4 +1,4 @@
-from collections import Enum
+from enum import Enum
 
 from Resources import Resources
 from CultProgress import CultProgress
