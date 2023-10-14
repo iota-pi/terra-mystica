@@ -43,7 +43,7 @@ if [[ "${1:-}" == "up" ]]; then
 fi
 
 if [[ "${1:-}" == "poetry" ]]; then
-  ./dc.sh run --rm poetry poetry "${@:2}"
+  ./dc.sh run --rm --user root poetry poetry "${@:2}"
 fi
 
 if [[ "${1:-}" =~ (py)?test ]]; then
