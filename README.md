@@ -13,5 +13,5 @@ Then, if using VS Code, use the reopen in container command.
 To test it, run:
 
 ```
-docker compose run app
+docker compose run --rm app
 ```
