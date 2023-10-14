@@ -14,7 +14,7 @@ jobs:
         run: ./ci.sh build
 
       - name: Check formatting
-        run: ./ci.sh black
+        run: ./ci.sh check-format
 
       - name: Run tests
         run: ./ci.sh test

@@ -15,3 +15,17 @@ To test it, run:
 ```
 docker compose run --rm app
 ```
+
+## Running tests
+
+To run the tests locally, use:
+
+```
+./ci.sh test
+```
+
+To auto-format your code, use:
+
+```
+./ci.sh format
+```
