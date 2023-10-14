@@ -1,4 +1,9 @@
+from Board import Board
+
+
 def main():
+    board = Board()
+    print(board.data)
     print("hi")
 
 

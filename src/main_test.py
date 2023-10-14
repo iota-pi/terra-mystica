@@ -7,4 +7,4 @@ class TestMain:
 
         with patch("main.print") as print_func:
             main()
-        print_func.assert_called_once_with("hi")
+        print_func.assert_called_with("hi")
