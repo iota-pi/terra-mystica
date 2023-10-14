@@ -95,7 +95,6 @@ class ChaosMagicians(Faction):
     sanctuary_favour_tokens = 2
 
 
-
 class Giants(Faction):
     starting_cult = CultProgress(
         fire=1,
