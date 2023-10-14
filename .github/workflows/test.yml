@@ -1,0 +1,20 @@
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  black_job:
+    runs-on: ubuntu-latest
+    name: Run tests and check formatting
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build images
+        run: ./ci.sh build
+
+      - name: Check formatting
+        run: ./ci.sh black
+
+      - name: Run tests
+        run: ./ci.sh test
