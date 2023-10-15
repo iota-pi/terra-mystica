@@ -1,8 +1,9 @@
 from dataclasses import dataclass
+from util import ArithmeticEnabledDataclass
 
 
-@dataclass
-class CultProgress:
+@dataclass(frozen=True, slots=True)
+class CultProgress(ArithmeticEnabledDataclass):
     fire: int = 0
     water: int = 0
     earth: int = 0
