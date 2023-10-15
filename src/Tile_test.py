@@ -24,3 +24,4 @@ class TestTile:
         assert not spot.can_build(Building.TEMPLE)
         assert not spot.can_build(Building.STRONGHOLD)
         assert not spot.can_build(Building.SANCTUARY)
+        
