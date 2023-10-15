@@ -7,7 +7,7 @@ from RoundToken import RoundToken
 
 ROUND_TOKENS = [
     RoundToken(
-        bonus_condition=AbstractResources(spades=1),
+        bonus_condition=AbstractResources(spades_credit=1),
         bonus_points=2,
         cult_condition=CultProgress(earth=1),
         cult_reward=Resources(coins=1),
@@ -28,13 +28,13 @@ ROUND_TOKENS = [
         bonus_condition=Building.TRADING_HOUSE,
         bonus_points=3,
         cult_condition=CultProgress(air=4),
-        cult_reward=AbstractResources(spades=1),
+        cult_reward=AbstractResources(spades_credit=1),
     ),
     RoundToken(
         bonus_condition=Building.TRADING_HOUSE,
         bonus_points=3,
         cult_condition=CultProgress(water=4),
-        cult_reward=AbstractResources(spades=1),
+        cult_reward=AbstractResources(spades_credit=1),
     ),
     RoundToken(
         bonus_condition=(Building.STRONGHOLD, Building.SANCTUARY),
@@ -52,6 +52,6 @@ ROUND_TOKENS = [
         bonus_condition=AbstractResources(towns=1),
         bonus_points=5,
         cult_condition=CultProgress(earth=4),
-        cult_reward=AbstractResources(spades=1),
+        cult_reward=AbstractResources(spades_credit=1),
     ),
 ]
