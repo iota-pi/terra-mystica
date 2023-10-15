@@ -3,7 +3,7 @@ class TestTile:
         from Tile import Tile
         from Terrain import Terrain
         from Building import Building
-        
+
         spot = Tile(Terrain.MOUNTAIN)
         assert spot.can_build(Building.DWELLING)
         assert not spot.can_build(Building.TRADING_HOUSE)
@@ -24,4 +24,3 @@ class TestTile:
         assert not spot.can_build(Building.TEMPLE)
         assert not spot.can_build(Building.STRONGHOLD)
         assert not spot.can_build(Building.SANCTUARY)
-        
