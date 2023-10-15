@@ -111,4 +111,5 @@ class DoubleSpadeAction(SharedAction):
 class WitchesAction(Action):
     result = AbstractResources(dwelling_credit=1)
 
+
 # TODO
