@@ -18,7 +18,10 @@ class Tile:
             return True
         if self.building is None:
             return False
-        if self.building == Building.DWELLING and self.building == Building.TRADING_HOUSE:
+        if (
+            self.building == Building.DWELLING
+            and self.building == Building.TRADING_HOUSE
+        ):
             return True
         if self.building == Building.TRADING_HOUSE:
             if self.building == Building.STRONGHOLD:
