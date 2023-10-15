@@ -4,7 +4,7 @@ from Resources import Resources
 from PassToken import PassToken
 
 
-ROUND_TOKENS = [
+PASS_TOKENS = [
     PassToken(
         bonus_condition=Building.DWELLING,
         bonus_points=1,
