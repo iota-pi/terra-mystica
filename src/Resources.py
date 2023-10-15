@@ -1,8 +1,9 @@
 from dataclasses import dataclass
+from util import ArithmeticEnabledDataclass
 
 
-@dataclass
-class Resources:
+@dataclass(frozen=True, slots=True)
+class Resources(ArithmeticEnabledDataclass):
     workers: int = 0
     power: int = 0
     coins: int = 0
