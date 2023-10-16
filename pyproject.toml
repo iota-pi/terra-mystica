@@ -7,13 +7,11 @@ authors = ["David Adams"]
 [tool.poetry.dependencies]
 python = "^3.12"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
 pytest = "^7.4.2"
 mypy = "^1.5.1"
 pylama = "^8.4.1"
-
-[tool.poetry.group.dev.dependencies]
 setuptools = "^68.2.2"
 
 [build-system]
