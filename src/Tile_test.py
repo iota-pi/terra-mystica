@@ -1,8 +1,9 @@
+from Tile import Tile
+from Terrain import Terrain
+from Building import Building
+
 class TestTile:
     def test_building(self):
-        from Tile import Tile
-        from Terrain import Terrain
-        from Building import Building
 
         spot = Tile(Terrain.MOUNTAIN)
         assert spot.can_build(Building.DWELLING)

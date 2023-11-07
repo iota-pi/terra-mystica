@@ -23,13 +23,13 @@ class Tile:
             raise InvalidActionError("Cannot terraform a tile with a building on it")
         self._terrain = terrain_goal
 
-    def build(self, building: Building, faction: Faction) -> None:
-        if not self.can_build(building=building, faction=faction):
+    def build(self, new_building: Building, faction: Faction) -> None:
+        if not self.can_build(building=new_building, faction=faction):
             raise InvalidActionError()
-        self._building = building
+        self._building = new_building
         self._faction = faction
 
-    def can_build(self, building: Building, faction: Faction) -> bool:
+    def can_build(self, new_building: Building, faction: Faction) -> bool:
         if self._faction is not None and self._faction != faction:
             raise InvalidActionError(
                 "Cannot build on top of another faction's building"
