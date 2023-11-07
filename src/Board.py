@@ -84,7 +84,7 @@ class Board:
         else:
             unfiltered_list = self.get_directly_adj(start, None)
             for tile in unfiltered_list:
-                if self.get(tile).terrain == terain_filter:
+                if self.get(tile)._terrain == terain_filter:
                     adjacent_tile_list.append(tile)
         return adjacent_tile_list  # = [TL,TR,R,BR,BL,L]
 
@@ -114,11 +114,11 @@ class Board:
         return adjacent_tile_list
 
     def check_adjacency(self, start, end, shipping_limit) -> str:
-        for tile in self.get_directly_adj(start, self.get(end[0], end[1]).terrain):
+        for tile in self.get_directly_adj(start, self.get(end[0], end[1])._terrain):
             if tile == end:
                 return "Direct"
         for tile in self.get_indirectly_adj(
-            start, self.get(end[0], end[1]).terrain, shipping_limit=shipping_limit
+            start, self.get(end[0], end[1])._terrain, shipping_limit=shipping_limit
         ):
             if tile == end:
                 return "Indirect"

@@ -11,8 +11,8 @@ class Tile:
     _faction: Faction | None
 
     def __init__(self, terrain: Terrain) -> None:
-        self.terrain = terrain
-        self.building = None
+        self._terrain = terrain
+        self._building = None
 
     @property
     def terrain(self) -> Terrain:
@@ -36,7 +36,7 @@ class Tile:
             )
         if self._terrain != faction.terrain:
             raise InvalidActionError(
-                f"Faction {faction.name} cannot build on {self.terrain.name}"
+                f"Faction {faction.name} cannot build on {self._terrain.name}"
             )
         if self._building is None:
             if new_building == Building.DWELLING:
