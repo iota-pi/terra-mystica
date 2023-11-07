@@ -1,7 +1,22 @@
 from Tile import Tile
 from Terrain import Terrain
 from Building import Building
-from Faction import *
+from Faction import (
+    Dwarves,
+    Engineers,
+    Auren,
+    Witches,
+    Swarmlings,
+    Mermaids,
+    Alchemists,
+    Darklings,
+    Halflings,
+    Cultists,
+    Fakirs,
+    Nomads,
+    ChaosMagicians,
+    Giants,
+)
 
 
 class TestTile:
