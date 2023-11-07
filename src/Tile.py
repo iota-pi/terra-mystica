@@ -15,20 +15,21 @@ class Tile:
             self.building = new_building
 
     def can_build(self, new_building: Building) -> bool:
-        if self.building is None and new_building == Building.DWELLING:
-            return True
         if self.building is None:
+            if new_building == Building.DWELLING:
+                return True
             return False
-        if (
-            self.building == Building.DWELLING
-            and new_building == Building.TRADING_HOUSE
-        ):
-            return True
+        if self.building == Building.DWELLING:
+            if new_building == Building.TRADING_HOUSE:
+                return True
+            return False
         if self.building == Building.TRADING_HOUSE:
             if new_building == Building.STRONGHOLD:
                 return True
             if new_building == Building.TEMPLE:
                 return True
-        if self.building == Building.TEMPLE and new_building == Building.SANCTUARY:
-            return True
+            return False
+        if self.building == Building.TEMPLE:
+            if new_building == Building.SANCTUARY:
+                return True
         return False

@@ -17,7 +17,9 @@ class TestBoard:
             (1, 3),
         ]
         assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.DESERT) == []
-        assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.SWAMP) == [(2, 2)]
+        assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.SWAMP) == [
+            (2, 2)
+        ]
         assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.LAKE) == [
             (1, 3),
             (3, 4),
