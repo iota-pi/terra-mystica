@@ -13,6 +13,7 @@ class Tile:
     def __init__(self, terrain: Terrain) -> None:
         self._terrain = terrain
         self._building = None
+        self._faction = None
 
     @property
     def terrain(self) -> Terrain:
@@ -24,7 +25,7 @@ class Tile:
         self._terrain = terrain_goal
 
     def build(self, new_building: Building, faction: Faction) -> None:
-        if not self.can_build(building=new_building, faction=faction):
+        if not self.can_build(new_building=new_building, faction=faction):
             raise InvalidActionError()
         self._building = new_building
         self._faction = faction
