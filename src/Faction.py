@@ -1,7 +1,9 @@
 from enum import Enum
+from Building import Building
 
 from Resources import Resources
 from CultProgress import CultProgress
+from Terrain import Terrain
 
 
 class FactionColour(Enum):
@@ -15,6 +17,7 @@ class FactionColour(Enum):
 
 
 class Faction:
+    name: str
     starting_resources = Resources(
         workers=3,
         coins=15,
@@ -24,6 +27,7 @@ class Faction:
     starting_dwellings = 2
     starting_shipping = 0
     colour: FactionColour
+    terrain: Terrain
 
     base_income = Resources(workers=1)
 
@@ -39,7 +43,6 @@ class Faction:
         Resources(),
     )
 
-    # TODO for non-neighbouring trading houses, coins cost is doubled
     trading_house_cost = Resources(workers=2, coins=3)
     trading_house_incomes = (
         Resources(power=1, coins=2),
@@ -73,8 +76,23 @@ class Faction:
     # TODO
     # extra cult abilities
 
+    def get_building_cost(self, building: Building):
+        if building == Building.DWELLING:
+            return self.dwelling_cost
+        # TODO for non-neighbouring trading houses, coins cost is doubled
+        if building == Building.TRADING_HOUSE:
+            return self.trading_house_cost
+        if building == Building.TEMPLE:
+            return self.temple_cost
+        if building == Building.STRONGHOLD:
+            return self.stronghold_cost
+        if building == Building.SANCTUARY:
+            return self.sanctuary_cost
+        raise ValueError(f"Unknown building type: {building}")
+
 
 class ChaosMagicians(Faction):
+    name = "Chaos Magicians"
     starting_resources = Resources(
         workers=4,
         coins=15,
@@ -85,6 +103,7 @@ class ChaosMagicians(Faction):
     )
     starting_dwellings = 1
     colour = FactionColour.RED
+    terrain = Terrain.WASTELAND
 
     temple_favour_tokens = 2
 
@@ -96,21 +115,25 @@ class ChaosMagicians(Faction):
 
 
 class Giants(Faction):
+    name = "Giants"
     starting_cult = CultProgress(
         fire=1,
         air=1,
     )
     colour = FactionColour.RED
+    terrain = Terrain.WASTELAND
 
     stronghold_income = Resources(power=4)
 
 
 class Auren(Faction):
+    name = "Auren"
     starting_cult = CultProgress(
         water=1,
         air=1,
     )
     colour = FactionColour.GREEN
+    terrain = Terrain.FOREST
 
     stronghold_favour_tokens = 1
 
@@ -118,13 +141,16 @@ class Auren(Faction):
 
 
 class Witches(Faction):
+    name = "Witches"
     starting_cult = CultProgress(
         air=2,
     )
     colour = FactionColour.GREEN
+    terrain = Terrain.FOREST
 
 
 class Swarmlings(Faction):
+    name = "Swarmlings"
     starting_resources = Resources(
         workers=8,
         coins=20,
@@ -137,6 +163,7 @@ class Swarmlings(Faction):
         air=1,
     )
     colour = FactionColour.BLUE
+    terrain = Terrain.LAKE
 
     base_income = Resources(workers=2)
 
@@ -160,6 +187,7 @@ class Swarmlings(Faction):
 
 
 class Mermaids(Faction):
+    name = "Mermaids"
     starting_resources = Resources(
         workers=3,
         coins=15,
@@ -170,6 +198,7 @@ class Mermaids(Faction):
     )
     starting_shipping = 1
     colour = FactionColour.BLUE
+    terrain = Terrain.LAKE
 
     stronghold_income = Resources(power=4)
 
@@ -177,6 +206,7 @@ class Mermaids(Faction):
 
 
 class Fakirs(Faction):
+    name = "Fakirs"
     starting_resources = Resources(
         workers=3,
         coins=15,
@@ -187,6 +217,7 @@ class Fakirs(Faction):
         air=1,
     )
     colour = FactionColour.YELLOW
+    terrain = Terrain.DESERT
 
     stronghold_cost = Resources(workers=4, coins=10)
     stronghold_income = Resources(priests=1)
@@ -196,6 +227,7 @@ class Fakirs(Faction):
 
 
 class Nomads(Faction):
+    name = "Nomads"
     starting_resources = Resources(
         workers=2,
         coins=15,
@@ -207,6 +239,7 @@ class Nomads(Faction):
     )
     starting_dwellings = 3
     colour = FactionColour.YELLOW
+    terrain = Terrain.DESERT
 
     trading_house_incomes = (
         Resources(power=1, coins=2),
@@ -219,6 +252,7 @@ class Nomads(Faction):
 
 
 class Halflings(Faction):
+    name = "Halflings"
     starting_resources = Resources(
         workers=3,
         coins=15,
@@ -229,6 +263,7 @@ class Halflings(Faction):
         air=1,
     )
     colour = FactionColour.BROWN
+    terrain = Terrain.FIELD
 
     stronghold_cost = Resources(workers=4, coins=8)
 
@@ -236,11 +271,13 @@ class Halflings(Faction):
 
 
 class Cultists(Faction):
+    name = "Cultists"
     starting_cult = CultProgress(
         fire=1,
         earth=1,
     )
     colour = FactionColour.BROWN
+    terrain = Terrain.FIELD
 
     stronghold_cost = Resources(workers=4, coins=8)
 
@@ -248,6 +285,7 @@ class Cultists(Faction):
 
 
 class Engineers(Faction):
+    name = "Engineers"
     starting_resources = Resources(
         workers=2,
         coins=10,
@@ -255,6 +293,7 @@ class Engineers(Faction):
     )
     starting_cult = CultProgress()
     colour = FactionColour.GREY
+    terrain = Terrain.MOUNTAIN
 
     base_income = Resources()
 
@@ -285,10 +324,12 @@ class Engineers(Faction):
 
 
 class Dwarves(Faction):
+    name = "Dwarves"
     starting_cult = CultProgress(
         earth=2,
     )
     colour = FactionColour.GREY
+    terrain = Terrain.MOUNTAIN
 
     trading_house_incomes = (
         Resources(power=1, coins=3),
@@ -305,6 +346,7 @@ class Dwarves(Faction):
 
 
 class Darklings(Faction):
+    name = "Darklings"
     starting_resources = Resources(
         workers=1,
         coins=15,
@@ -316,6 +358,7 @@ class Darklings(Faction):
         earth=1,
     )
     colour = FactionColour.BLACK
+    terrain = Terrain.SWAMP
 
     sanctuary_cost = Resources(workers=4, coins=10)
     sanctuary_income = Resources(priests=2)
@@ -324,11 +367,13 @@ class Darklings(Faction):
 
 
 class Alchemists(Faction):
+    name = "Alchemists"
     starting_cult = CultProgress(
         fire=1,
         water=1,
     )
     colour = FactionColour.BLACK
+    terrain = Terrain.SWAMP
 
     trading_house_incomes = (
         Resources(power=1, coins=2),

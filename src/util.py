@@ -23,3 +23,6 @@ def _sub_resources[T](a: T, b: T) -> T:
 class ArithmeticEnabledDataclass:
     __add__ = __radd__ = _add_resources
     __sub__ = __rsub__ = _sub_resources
+
+    def __neg__(self):
+        return _sub_resources(type(self)(), self)
