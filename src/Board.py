@@ -54,242 +54,71 @@ class Board:
     def get(self, x, y):
         return self.data[y][x]
 
-    def getDirectlyAdj(self, start=(0, 0), TerainFilter=None) -> list:
-        adjacentTileList = []
-        if start[1] > 0:
-            if start[1] % 2 == 0:  # for even rows
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0], start[1] - 1).terrain
-                ):
-                    adjacentTileList.append((start[0], start[1] - 1))  # top left
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0] + 1, start[1] - 1).terrain
-                ):
-                    adjacentTileList.append((start[0] + 1, start[1] - 1))  # top right
-            else:  # for odd rows
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0] - 1, start[1] - 1).terrain
-                ):
-                    adjacentTileList.append((start[0] - 1, start[1] - 1))  # top left
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0], start[1] - 1).terrain
-                ):
-                    adjacentTileList.append((start[0], start[1] - 1))  # top right
-        if start[0] < BOARD_WIDTH - 2 or (
-            start[1] % 2 == 1 and start[0] < BOARD_WIDTH - 1
-        ):
-            if (
-                TerainFilter is None
-                or TerainFilter == self.get(start[0] + 1, start[1]).terrain
-            ):
-                adjacentTileList.append((start[0] + 1, start[1]))  # right
-        if start[1] < BOARD_HEIGHT - 1:
-            if start[1] % 2 == 0:  # for even rows
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0] + 1, start[1] + 1).terrain
-                ):
-                    adjacentTileList.append(
-                        (start[0] + 1, start[1] + 1)
-                    )  # bottom right
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0], start[1] + 1).terrain
-                ):
-                    adjacentTileList.append((start[0], start[1] + 1))  # bottom left
-            else:  # for odd rows
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0], start[1] + 1).terrain
-                ):
-                    adjacentTileList.append((start[0], start[1] + 1))  # bottom right
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0] - 1, start[1] + 1).terrain
-                ):
-                    adjacentTileList.append((start[0] - 1, start[1] + 1))  # bottom left
-        if start[0] > 0:
-            if (
-                TerainFilter is None
-                or TerainFilter == self.get(start[0] - 1, start[1]).terrain
-            ):
-                adjacentTileList.append((start[0] - 1, start[1]))  # left
-        return adjacentTileList  # = [TL,TR,R,BR,BL,L]
+    def get_directly_adj(self, start=(0, 0), terain_filter=None) -> list:
+        adjacent_tile_list = []
+        if terain_filter is None:
+            if start[1] > 0:
+                if start[1] % 2 == 0:  # for even rows
+                    adjacent_tile_list.append((start[0], start[1] - 1))  # top left
+                    adjacent_tile_list.append((start[0] + 1, start[1] - 1))  # top right
+                else:  # for odd rows
+                    adjacent_tile_list.append((start[0] - 1, start[1] - 1))  # top left
+                    adjacent_tile_list.append((start[0], start[1] - 1))  # top right
+            if start[0] < BOARD_WIDTH - 2 or (start[1] % 2 == 1 and start[0] < BOARD_WIDTH - 1):
+                adjacent_tile_list.append((start[0] + 1, start[1]))  # right
+            if start[1] < BOARD_HEIGHT - 1:
+                if start[1] % 2 == 0:  # for even rows
+                    adjacent_tile_list.append((start[0] + 1, start[1] + 1)) # bottom right
+                    adjacent_tile_list.append((start[0], start[1] + 1))  # bottom left
+                else:  # for odd rows
+                    adjacent_tile_list.append((start[0], start[1] + 1))  # bottom right
+                    adjacent_tile_list.append((start[0] - 1, start[1] + 1))  # bottom left
+            if start[0] > 0:
+                    adjacent_tile_list.append((start[0] - 1, start[1]))  # left
+        else:
+            unfiltered_list = self.get_directly_adj(start, None)
+            for tile in unfiltered_list:
+                if self.get(tile).terrain == terain_filter:
+                    adjacent_tile_list.append(tile)
+        return adjacent_tile_list  # = [TL,TR,R,BR,BL,L]
 
-    def getIndirectlyAdj(
-        self, start=(0, 0), TerainFilter=None, shippingLimit=0
-    ) -> list:
-        if self.getDirectlyAdj(start, Terrain.RIVER) == []:
-            return []
-        if shippingLimit == 0:
-            return self.getDirectlyAdj(start, TerainFilter)
-        adjacentTileList = []
-        if start[1] > 0:
-            if start[1] % 2 == 0:  # for even rows
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0], start[1] - 1).terrain
-                ):
-                    if self.get(start[0], start[1] - 1).terrain == Terrain.RIVER:
-                        for tile in self.getIndirectlyAdj(
-                            (start[0], start[1] - 1), TerainFilter, shippingLimit - 1
-                        ):
-                            adjacentTileList.append(tile)
-                    else:
-                        adjacentTileList.append((start[0], start[1] - 1))  # top left
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0] + 1, start[1] - 1).terrain
-                ):
-                    if self.get(start[0] + 1, start[1] - 1).terrain == Terrain.RIVER:
-                        for tile in self.getIndirectlyAdj(
-                            (start[0] + 1, start[1] - 1),
-                            TerainFilter,
-                            shippingLimit - 1,
-                        ):
-                            adjacentTileList.append(tile)
-                    else:
-                        adjacentTileList.append(
-                            (start[0] + 1, start[1] - 1)
-                        )  # top right
-            else:  # for odd rows
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0] - 1, start[1] - 1).terrain
-                ):
-                    if self.get(start[0] - 1, start[1] - 1).terrain == Terrain.RIVER:
-                        for tile in self.getIndirectlyAdj(
-                            (start[0] - 1, start[1] - 1),
-                            TerainFilter,
-                            shippingLimit - 1,
-                        ):
-                            adjacentTileList.append(tile)
-                    else:
-                        adjacentTileList.append(
-                            (start[0] - 1, start[1] - 1)
-                        )  # top left
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0], start[1] - 1).terrain
-                ):
-                    if self.get(start[0], start[1] - 1).terrain == Terrain.RIVER:
-                        for tile in self.getIndirectlyAdj(
-                            (start[0], start[1] - 1), TerainFilter, shippingLimit - 1
-                        ):
-                            adjacentTileList.append(tile)
-                    else:
-                        adjacentTileList.append((start[0], start[1] - 1))  # top right
-        if start[0] < BOARD_WIDTH - 2 or (
-            start[1] % 2 == 1 and start[0] < BOARD_WIDTH - 1
-        ):
-            if (
-                TerainFilter is None
-                or TerainFilter == self.get(start[0] + 1, start[1]).terrain
-            ):
-                if self.get(start[0] + 1, start[1]).terrain == Terrain.RIVER:
-                    for tile in self.getIndirectlyAdj(
-                        (start[0] + 1, start[1]), TerainFilter, shippingLimit - 1
-                    ):
-                        adjacentTileList.append(tile)
+    def get_indirectly_adj(self, start = (0, 0), terain_filter = None, shipping_limit = 0) -> list:
+        adjacent_tile_list = []
+        if self.get_directly_adj(start, Terrain.RIVER) == []:
+            return self.get_directly_adj(start, None)
+        if shipping_limit == 0:
+            direct_list = self.get_directly_adj(start, terain_filter)
+            for tile in direct_list:
+                if not self.found_tile(adjacent_tile_list, tile):
+                    adjacent_tile_list.append(tile)
+        else:
+            direct_list = self.get_directly_adj(start, None)
+            for tile in direct_list:
+                if self.get(tile).terrain == Terrain.RIVER:
+                    indirect_list = self.get_indirectly_adj(tile, terain_filter, shipping_limit - 1)
+                    for t in indirect_list:
+                        if not self.found_tile(adjacent_tile_list, t):
+                            adjacent_tile_list.append(t)
                 else:
-                    adjacentTileList.append((start[0] + 1, start[1]))  # right
-        if start[1] < BOARD_HEIGHT - 1:
-            if start[1] % 2 == 0:  # for even rows
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0] + 1, start[1] + 1).terrain
-                ):
-                    if self.get(start[0] + 1, start[1] + 1).terrain == Terrain.RIVER:
-                        for tile in self.getIndirectlyAdj(
-                            (start[0] + 1, start[1] + 1),
-                            TerainFilter,
-                            shippingLimit - 1,
-                        ):
-                            adjacentTileList.append(tile)
-                    else:
-                        adjacentTileList.append(
-                            (start[0] + 1, start[1] + 1)
-                        )  # bottom right
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0], start[1] + 1).terrain
-                ):
-                    if self.get(start[0], start[1] + 1).terrain == Terrain.RIVER:
-                        for tile in self.getIndirectlyAdj(
-                            (start[0], start[1] + 1), TerainFilter, shippingLimit - 1
-                        ):
-                            adjacentTileList.append(tile)
-                    else:
-                        adjacentTileList.append((start[0], start[1] + 1))  # bottom left
-            else:  # for odd rows
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0], start[1] + 1).terrain
-                ):
-                    if self.get(start[0], start[1] + 1).terrain == Terrain.RIVER:
-                        for tile in self.getIndirectlyAdj(
-                            (start[0], start[1] + 1), TerainFilter, shippingLimit - 1
-                        ):
-                            adjacentTileList.append(tile)
-                    else:
-                        adjacentTileList.append(
-                            (start[0], start[1] + 1)
-                        )  # bottom right
-                if (
-                    TerainFilter is None
-                    or TerainFilter == self.get(start[0] - 1, start[1] + 1).terrain
-                ):
-                    if self.get(start[0] - 1, start[1] + 1).terrain == Terrain.RIVER:
-                        for tile in self.getIndirectlyAdj(
-                            (start[0] - 1, start[1] + 1),
-                            TerainFilter,
-                            shippingLimit - 1,
-                        ):
-                            adjacentTileList.append(tile)
-                    else:
-                        adjacentTileList.append(
-                            (start[0] - 1, start[1] + 1)
-                        )  # bottom left
-        if start[0] > 0:
-            if (
-                TerainFilter is None
-                or TerainFilter == self.get(start[0] - 1, start[1]).terrain
-            ):
-                if self.get(start[0] - 1, start[1]).terrain == Terrain.RIVER:
-                    for tile in self.getIndirectlyAdj(
-                        (start[0] - 1, start[1]), TerainFilter, shippingLimit - 1
-                    ):
-                        adjacentTileList.append(tile)
-                else:
-                    adjacentTileList.append((start[0] - 1, start[1]))  # left
-        adjacentTileList = self.removeSubsequentDuplicates(adjacentTileList)
-        return adjacentTileList
+                    adjacent_tile_list.append(tile)
+        return adjacent_tile_list
 
-    def checkAdjacency(self, start, end, shippingLimit) -> str:
-        for tile in self.getDirectlyAdj(start, self.get(end[0], end[1]).terrain):
+    def check_adjacency(self, start, end, shipping_limit) -> str:
+        for tile in self.get_directly_adj(start, self.get(end[0], end[1]).terrain):
             if tile == end:
                 return "Direct"
-        for tile in self.getIndirectlyAdj(
-            start, self.get(end[0], end[1]).terrain, shippingLimit=shippingLimit
+        for tile in self.get_indirectly_adj(
+            start, self.get(end[0], end[1]).terrain, shipping_limit = shipping_limit
         ):
             if tile == end:
                 return "Indirect"
         return "Not"
 
-    def removeSubsequentDuplicates(list=[]) -> list:
-        newList = []
-        for tile1 in list:
-            found = False
-            for tile2 in newList:
-                if tile1 == tile2:
-                    found = True
-            if not found:
-                newList.append(tile1)
-        return newList
+    def found_tile(found = [], tile = (0, 0)) -> bool:
+        for i in found:
+            if i == tile:
+                return True
+        return False
 
     def play_priest(self, player: Player, cult: Cult):
         if self.priest_slots[cult] <= 0:
