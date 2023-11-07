@@ -17,18 +17,20 @@ class TestBoard:
         #     (2, 4),
         #     (1, 3),
         # ]
-        assert aMap.get_directly_adj(start=((2, 3)), terain_filter=Terrain.DESERT) == []
-        assert aMap.get_directly_adj(start=((2, 3)), terain_filter=Terrain.SWAMP) == [
+        assert (
+            aMap.get_directly_adj(start=((2, 3)), terrain_filter=Terrain.DESERT) == []
+        )
+        assert aMap.get_directly_adj(start=((2, 3)), terrain_filter=Terrain.SWAMP) == [
             ((2, 2))
         ]
-        # assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.LAKE) == [
+        # assert aMap.get_directly_adj(start=(2, 3), terrain_filter=Terrain.LAKE) == [
         #     (1, 3),
         #     (3, 4),
         # ]
-        # assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.WASTELAND) == [
+        # assert aMap.get_directly_adj(start=(2, 3), terrain_filter=Terrain.WASTELAND) == [
         #     (2, 4)
         # ]
-        # assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.RIVER) == [
+        # assert aMap.get_directly_adj(start=(2, 3), terrain_filter=Terrain.RIVER) == [
         #     (3, 2),
         #     (3, 3),
         # ]
@@ -49,26 +51,26 @@ class TestBoard:
         #     (2, 4),
         #     (1, 3),
         # ]
-        # assert aMap.ge_indirectly_adj(start=(2, 3), terain_filter=Terrain.DESERT) == [
+        # assert aMap.ge_indirectly_adj(start=(2, 3), terrain_filter=Terrain.DESERT) == [
         #     (2, 3)
         # ]
         # assert aMap.ge_indirectly_adj(
-        #     start=(2, 3), terain_filter=Terrain.SWAMP, shipping_limit=1
+        #     start=(2, 3), terrain_filter=Terrain.SWAMP, shipping_limit=1
         # ) == [(2, 2), (4, 4)]
         # assert aMap.ge_indirectly_adj(
-        #     start=(2, 3), terain_filter=Terrain.LAKE, shipping_limit=1
+        #     start=(2, 3), terrain_filter=Terrain.LAKE, shipping_limit=1
         # ) == [(1, 3), (3, 4)]
         # assert aMap.ge_indirectly_adj(
-        #     start=(2, 3), terain_filter=Terrain.WASTELAND, shipping_limit=1
+        #     start=(2, 3), terrain_filter=Terrain.WASTELAND, shipping_limit=1
         # ) == [(2, 4)]
         # assert aMap.ge_indirectly_adj(
-        #     start=(2, 3), terain_filter=Terrain.RIVER, shipping_limit=1
+        #     start=(2, 3), terrain_filter=Terrain.RIVER, shipping_limit=1
         # ) == [(3, 2), (2, 1), (3, 3), (4, 3)]
         # assert aMap.ge_indirectly_adj(
-        #     start=(2, 3), terain_filter=Terrain.FIELD, shipping_limit=1
+        #     start=(2, 3), terrain_filter=Terrain.FIELD, shipping_limit=1
         # ) == [(3, 1)]
         # assert aMap.ge_indirectly_adj(
-        #     start=(2, 3), terain_filter=Terrain.MOUNTAIN, shipping_limit=1
+        #     start=(2, 3), terrain_filter=Terrain.MOUNTAIN, shipping_limit=1
         # ) == [(4, 2)]
 
         assert aMap.check_adjacency((7, 7), (9, 6), 0) == "Not"
