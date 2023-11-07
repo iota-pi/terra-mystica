@@ -1,9 +1,9 @@
 from Board import Board
 from Terrain import Terrain
 
+
 class TestBoard:
     def test_adj(self):
-
         aMap = Board()
         assert aMap.get(2, 3).terrain == Terrain.DESERT
         assert aMap.get(6, 3).terrain == Terrain.LAKE
