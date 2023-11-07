@@ -8,26 +8,27 @@ class Tile:
 
     def __init__(self, terrain: Terrain) -> None:
         self.terrain = terrain
+        self.building = None
 
-    def build(self, building: Building) -> None:
-        if self.can_build(building):
-            self.building = building
+    def build(self, new_building: Building) -> None:
+        if self.can_build(new_building):
+            self.building = new_building
 
-    def can_build(self, building: Building) -> bool:
-        if self.building is None and self.building == Building.DWELLING:
+    def can_build(self, new_building: Building) -> bool:
+        if self.building is None and new_building == Building.DWELLING:
             return True
         if self.building is None:
             return False
         if (
             self.building == Building.DWELLING
-            and self.building == Building.TRADING_HOUSE
+            and new_building == Building.TRADING_HOUSE
         ):
             return True
         if self.building == Building.TRADING_HOUSE:
-            if self.building == Building.STRONGHOLD:
+            if new_building == Building.STRONGHOLD:
                 return True
-            if self.building == Building.TEMPLE:
+            if new_building == Building.TEMPLE:
                 return True
-        if self.building == Building.TEMPLE and self.building == Building.SANCTUARY:
+        if self.building == Building.TEMPLE and new_building == Building.SANCTUARY:
             return True
         return False
