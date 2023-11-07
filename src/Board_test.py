@@ -5,9 +5,9 @@ from Terrain import Terrain
 class TestBoard:
     def test_adj(self):
         aMap = Board()
-        assert aMap.get(2, 3)._terrain == Terrain.DESERT
-        assert aMap.get(6, 3)._terrain == Terrain.LAKE
-        assert aMap.get(7, 7)._terrain == Terrain.SWAMP
+        assert aMap.get((2, 3))._terrain == Terrain.DESERT
+        assert aMap.get((6, 3))._terrain == Terrain.LAKE
+        assert aMap.get((7, 7))._terrain == Terrain.SWAMP
 
         # assert aMap.get_directly_adj(start=(2, 3)) == [
         #     (2, 2),
@@ -17,9 +17,9 @@ class TestBoard:
         #     (2, 4),
         #     (1, 3),
         # ]
-        assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.DESERT) == []
-        assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.SWAMP) == [
-            (2, 2)
+        assert aMap.get_directly_adj(start=((2, 3)), terain_filter=Terrain.DESERT) == []
+        assert aMap.get_directly_adj(start=((2, 3)), terain_filter=Terrain.SWAMP) == [
+            ((2, 2))
         ]
         # assert aMap.get_directly_adj(start=(2, 3), terain_filter=Terrain.LAKE) == [
         #     (1, 3),

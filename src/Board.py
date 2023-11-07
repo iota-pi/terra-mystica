@@ -51,9 +51,6 @@ class Board:
         else:
             raise ValueError("Unrecognised map style")
 
-    def get(self, x, y):
-        return self.data[y][x]
-
     def get(self, coords):
         return self.data[coords[1]][coords[0]]
 
@@ -117,11 +114,11 @@ class Board:
         return adjacent_tile_list
 
     def check_adjacency(self, start, end, shipping_limit) -> str:
-        for tile in self.get_directly_adj(start, self.get(end[0], end[1])._terrain):
+        for tile in self.get_directly_adj(start, self.get(end)._terrain):
             if tile == end:
                 return "Direct"
         for tile in self.get_indirectly_adj(
-            start, self.get(end[0], end[1])._terrain, shipping_limit=shipping_limit
+            start, self.get(end)._terrain, shipping_limit=shipping_limit
         ):
             if tile == end:
                 return "Indirect"
