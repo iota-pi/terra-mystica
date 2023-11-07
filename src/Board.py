@@ -54,6 +54,9 @@ class Board:
     def get(self, x, y):
         return self.data[y][x]
 
+    def get(self, coords):
+        return self.data[coords[1]][coords[0]]
+
     def get_directly_adj(self, start=(0, 0), terain_filter=None) -> list:
         adjacent_tile_list = []
         if terain_filter is None:
