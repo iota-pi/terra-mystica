@@ -13,8 +13,8 @@ jobs:
       - name: Build images
         run: ./ci.sh build
 
-      - name: Check formatting
-        run: ./ci.sh check-format
-
       - name: Run tests
         run: ./ci.sh test
+
+      - name: Check formatting
+        run: ./ci.sh check-format
