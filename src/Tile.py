@@ -1,3 +1,4 @@
+from typing import Type
 from Building import Building
 from Faction import Faction
 from Terrain import Terrain
@@ -8,10 +9,12 @@ from errors import InvalidActionError
 class Tile:
     _terrain: Terrain
     _building: Building | None
-    _faction: Faction | None
+    _faction: Type[Faction] | None
 
     def __init__(self, terrain: Terrain) -> None:
         self._terrain = terrain
+        self._building = None
+        self._faction = None
 
     @property
     def terrain(self) -> Terrain:
@@ -22,33 +25,23 @@ class Tile:
             raise InvalidActionError("Cannot terraform a tile with a building on it")
         self._terrain = terrain_goal
 
-    def build(self, building: Building, faction: Faction) -> None:
-        if not self.can_build(building=building, faction=faction):
+    def build(self, new_building: Building, faction: Type[Faction]) -> None:
+        if not self.can_build(new_building=new_building, faction=faction):
             raise InvalidActionError()
-        self._building = building
+        self._building = new_building
         self._faction = faction
 
-    def can_build(self, building: Building, faction: Faction) -> bool:
+    def can_build(self, new_building: Building, faction: Type[Faction]) -> bool:
         if self._faction is not None and self._faction != faction:
-            raise InvalidActionError(
-                "Cannot build on top of another faction's building"
-            )
-        if self.terrain != faction.terrain:
-            raise InvalidActionError(
-                f"Faction {faction.name} cannot build on {self.terrain.name}"
-            )
-
-        if self._building is None and building == Building.DWELLING:
-            return True
-        if self._building is None:
             return False
-        if self._building == Building.DWELLING and building == Building.TRADING_HOUSE:
-            return True
+        if self._terrain != faction.terrain:
+            return False
+        if self._building is None:
+            return new_building == Building.DWELLING
+        if self._building == Building.DWELLING:
+            return new_building == Building.TRADING_HOUSE
         if self._building == Building.TRADING_HOUSE:
-            if building == Building.STRONGHOLD:
-                return True
-            if building == Building.TEMPLE:
-                return True
-        if self._building == Building.TEMPLE and building == Building.SANCTUARY:
-            return True
+            return new_building in (Building.STRONGHOLD, Building.TEMPLE)
+        if self._building == Building.TEMPLE:
+            return new_building == Building.SANCTUARY
         return False
