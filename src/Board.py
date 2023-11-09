@@ -61,7 +61,7 @@ class Board:
         terrain_filter: Terrain | None = None,
     ) -> List[Coords]:
         adjacent_tile_list = []
-        row_start_offset = -(start[1] % 2)
+        row_start_offset = -((start[1] + 1) % 2)
         if terrain_filter is None:
             if start[1] > 0:
                 adjacent_tile_list.append(
@@ -76,10 +76,10 @@ class Board:
                 adjacent_tile_list.append((start[0] + 1, start[1]))  # right
             if start[1] < BOARD_HEIGHT - 1:
                 adjacent_tile_list.append(
-                    (start[0] + row_start_offset, start[1] + 1)
+                    (start[0] + row_start_offset + 1, start[1] + 1)
                 )  # bottom left
                 adjacent_tile_list.append(
-                    (start[0] + row_start_offset + 1, start[1] + 1)
+                    (start[0] + row_start_offset, start[1] + 1)
                 )  # bottom right
             if start[0] > 0:
                 adjacent_tile_list.append((start[0] - 1, start[1]))  # left
@@ -93,37 +93,36 @@ class Board:
     def get_indirectly_adj(
         self, start=(0, 0), terrain_filter=None, shipping_limit=0
     ) -> list:
-        adjacent_tile_list = []
+        unfiltered_list = []
         if self.get_directly_adj(start, Terrain.RIVER) == []:
-            return self.get_directly_adj(start, None)
+            return self.get_directly_adj(start, terrain_filter)
         if shipping_limit == 0:
-            direct_list = self.get_directly_adj(start, terrain_filter)
-            for tile in direct_list:
-                if tile not in adjacent_tile_list:
-                    adjacent_tile_list.append(tile)
+            unfiltered_list = self.get_directly_adj(start)
         else:
             direct_list = self.get_directly_adj(start, None)
             for tile in direct_list:
+                if tile not in unfiltered_list:
+                    unfiltered_list.append(tile)
                 if self.get(tile).terrain == Terrain.RIVER:
                     indirect_list = self.get_indirectly_adj(
-                        tile, terrain_filter, shipping_limit - 1
+                        tile, None, shipping_limit - 1
                     )
                     for t in indirect_list:
-                        if t not in adjacent_tile_list:
-                            adjacent_tile_list.append(t)
-                else:
-                    adjacent_tile_list.append(tile)
+                        if t not in unfiltered_list and t != start:
+                            unfiltered_list.append(t)
+        if terrain_filter is None:
+            return unfiltered_list
+        adjacent_tile_list = []
+        for tile in unfiltered_list:
+            if self.get(tile)._terrain == terrain_filter:
+                adjacent_tile_list.append(tile)
         return adjacent_tile_list
 
     def check_adjacency(self, start, end, shipping_limit) -> str:
-        for tile in self.get_directly_adj(start, self.get(end)._terrain):
-            if tile == end:
-                return "Direct"
-        for tile in self.get_indirectly_adj(
-            start, self.get(end)._terrain, shipping_limit=shipping_limit
-        ):
-            if tile == end:
-                return "Indirect"
+        if end in self.get_directly_adj(start, None):
+            return "Direct"
+        if end in self.get_indirectly_adj(start, None, shipping_limit):
+            return "Indirect"
         return "Not"
 
     def play_priest(self, player: Player, cult: Cult):
