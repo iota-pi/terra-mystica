@@ -18,7 +18,7 @@ class Resources(ArithmeticEnabledDataclass):
         priests: int = 0,
     ):
         # Work around limitations of frozen dataclasses
-        object.__setattr__(self, 'workers', workers)
-        object.__setattr__(self, 'power', Power(power))
-        object.__setattr__(self, 'coins', coins)
-        object.__setattr__(self, 'priests', priests)
+        object.__setattr__(self, "workers", workers)
+        object.__setattr__(self, "power", Power(power))
+        object.__setattr__(self, "coins", coins)
+        object.__setattr__(self, "priests", priests)

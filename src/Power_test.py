@@ -17,7 +17,7 @@ class TestPower:
         assert c.available == 0
 
     @pytest.mark.parametrize(
-        'power,sacrifice',
+        "power,sacrifice",
         [
             (0, 1),
             (1, 1),
@@ -32,7 +32,7 @@ class TestPower:
             a.sacrifice(sacrifice)
 
     @pytest.mark.parametrize(
-        'power,sacrifice,available',
+        "power,sacrifice,available",
         [
             (0, 0, 0),
             (2, 1, 1),
