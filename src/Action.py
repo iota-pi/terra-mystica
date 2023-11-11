@@ -34,7 +34,9 @@ class LocationSpecificAction(Action):
     @property
     def location(self) -> Tile:
         if self._location is None:
-            raise InvalidActionError()
+            raise InvalidActionError(
+                f"Location must be set for type {self.__class__.__name__}"
+            )
         return self._location
 
     @location.setter
