@@ -7,12 +7,18 @@ from errors import InvalidActionError
 from Player import Player
 from Terrain import Terrain
 from Tile import Tile
+from enum import Enum
 from board_layouts import DEFAULT_BOARD, LARGER_BOARD
 
 
 BOARD_WIDTH = 13
 BOARD_HEIGHT = 9
 Coords = Tuple[int, int]
+
+
+class AdjacencyType(Enum):
+    DIRECT = 0
+    INDIRECT = 1
 
 
 class Board:
@@ -51,6 +57,18 @@ class Board:
                 raise ValueError("There is no default board for that number of players")
         else:
             raise ValueError("Unrecognised map style")
+
+    def get_tiles_of_type(self, terrain_filter: Terrain):
+        return_list = []
+        for row in range(0, len(self.data)):
+            for col in range(0, len(self.data[row])):
+                tile = (col, row)
+                tile_object = self.get(tile)
+                if tile_object.terrain == terrain_filter or (
+                    terrain_filter is None and tile_object.terrain != Terrain.EMPTY
+                ):
+                    return_list.append(tile)
+        return return_list
 
     def get(self, coords: Coords):
         return self.data[coords[1]][coords[0]]
@@ -118,12 +136,12 @@ class Board:
                 adjacent_tile_list.append(tile)
         return adjacent_tile_list
 
-    def check_adjacency(self, start, end, shipping_limit) -> str:
+    def check_adjacency(self, start, end, shipping_limit) -> AdjacencyType:
         if end in self.get_directly_adj(start, None):
-            return "Direct"
+            return AdjacencyType.DIRECT
         if end in self.get_indirectly_adj(start, None, shipping_limit):
-            return "Indirect"
-        return "Not"
+            return AdjacencyType.INDIRECT
+        return None
 
     def play_priest(self, player: Player, cult: Cult):
         if self.priest_slots[cult] <= 0:
