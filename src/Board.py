@@ -18,7 +18,7 @@ Coords = Tuple[int, int]
 
 class AdjacencyType(Enum):
     DIRECT = 0
-    Indirect = 1
+    INDIRECT = 1
 
 
 class Board:
@@ -58,11 +58,11 @@ class Board:
         else:
             raise ValueError("Unrecognised map style")
 
-    def start(self, terrain_filter: Terrain | None = None):
+    def get_tiles_of_type(self, terrain_filter: Terrain):
         return_list = []
         for row in range(0, len(self.data)):
-            for spot in range(0, len(self.data[row])):
-                tile = (spot, row)
+            for col in range(0, len(self.data[row])):
+                tile = (col, row)
                 tile_object = self.get(tile)
                 if tile_object.terrain == terrain_filter or (
                     terrain_filter is None and tile_object.terrain != Terrain.EMPTY
@@ -140,7 +140,7 @@ class Board:
         if end in self.get_directly_adj(start, None):
             return AdjacencyType.DIRECT
         if end in self.get_indirectly_adj(start, None, shipping_limit):
-            return AdjacencyType.Indirect
+            return AdjacencyType.INDIRECT
         return None
 
     def play_priest(self, player: Player, cult: Cult):

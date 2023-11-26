@@ -82,16 +82,16 @@ class TestBoard:
         ) == [(4, 2)]
 
         assert aMap.check_adjacency((7, 7), (9, 6), 0) == None
-        assert aMap.check_adjacency((7, 7), (9, 6), 1) == AdjacencyType.Indirect
+        assert aMap.check_adjacency((7, 7), (9, 6), 1) == AdjacencyType.INDIRECT
         assert aMap.check_adjacency((7, 7), (8, 3), 2) == None
-        assert aMap.check_adjacency((7, 7), (8, 3), 3) == AdjacencyType.Indirect
+        assert aMap.check_adjacency((7, 7), (8, 3), 3) == AdjacencyType.INDIRECT
         assert aMap.check_adjacency((7, 7), (8, 1), 4) == None
-        assert aMap.check_adjacency((7, 7), (8, 1), 5) == AdjacencyType.Indirect
+        assert aMap.check_adjacency((7, 7), (8, 1), 5) == AdjacencyType.INDIRECT
 
     def test_start(self):
         aMap = Board()
         assert aMap.get((2, 3))._terrain == Terrain.DESERT
-        assert aMap.start(Terrain.LAKE) == [
+        assert aMap.get_tiles_of_type(Terrain.LAKE) == [
             (3, 0),
             (10, 0),
             (1, 3),
@@ -104,7 +104,7 @@ class TestBoard:
             (3, 8),
             (10, 8),
         ]
-        assert aMap.start(Terrain.DESERT) == [
+        assert aMap.get_tiles_of_type(Terrain.DESERT) == [
             (4, 0),
             (0, 1),
             (7, 1),
@@ -117,7 +117,7 @@ class TestBoard:
             (0, 7),
             (6, 8),
         ]
-        assert aMap.start(Terrain.RIVER) == [
+        assert aMap.get_tiles_of_type(Terrain.RIVER) == [
             (1, 1),
             (2, 1),
             (5, 1),
