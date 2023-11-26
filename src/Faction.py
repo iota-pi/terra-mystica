@@ -76,18 +76,19 @@ class Faction:
     # TODO
     # extra cult abilities
 
-    def get_building_cost(self, building: Building):
+    @classmethod
+    def get_building_cost(cls, building: Building):
         if building == Building.DWELLING:
-            return self.dwelling_cost
+            return cls.dwelling_cost
         # TODO for non-neighbouring trading houses, coins cost is doubled
         if building == Building.TRADING_HOUSE:
-            return self.trading_house_cost
+            return cls.trading_house_cost
         if building == Building.TEMPLE:
-            return self.temple_cost
+            return cls.temple_cost
         if building == Building.STRONGHOLD:
-            return self.stronghold_cost
+            return cls.stronghold_cost
         if building == Building.SANCTUARY:
-            return self.sanctuary_cost
+            return cls.sanctuary_cost
         raise ValueError(f"Unknown building type: {building}")
 
 

@@ -7,7 +7,7 @@ from Terrain import Terrain, calculate_spade_cost
 from Tile import Tile
 
 from errors import InsufficientResourcesError, InvalidActionError
-from typing import Set
+from typing import Set, Type
 
 
 POWER_BONUSES = [
@@ -20,13 +20,13 @@ POWER_BONUSES = [
 
 class Player:
     resources: Resources
-    faction: Faction
+    faction: Type[Faction]
     cult_progress: CultProgress
     shipping_level: int
     spades_level: int
     building_locations: Set[Tile]
 
-    def __init__(self, faction: Faction) -> None:
+    def __init__(self, faction: Type[Faction]) -> None:
         self.faction = faction
 
         self.cult_progress = faction.starting_cult
@@ -84,5 +84,5 @@ class Player:
     def build(self, location: Tile, building: Building) -> None:
         building_cost = self.faction.get_building_cost(building)
         self.spend(building_cost)
-        location.build(building=building, faction=self.faction)
+        location.build(new_building=building, faction=self.faction)
         self.building_locations.add(location)
