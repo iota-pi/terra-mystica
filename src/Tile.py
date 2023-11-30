@@ -20,6 +20,10 @@ class Tile:
     def terrain(self) -> Terrain:
         return self._terrain
 
+    @property
+    def building(self) -> Building | None:
+        return self._building
+
     def terraform(self, terrain_goal: Terrain) -> None:
         if self._building or self._faction:
             raise InvalidActionError("Cannot terraform a tile with a building on it")
