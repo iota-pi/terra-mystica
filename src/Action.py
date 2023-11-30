@@ -1,15 +1,17 @@
 from abc import ABC
+from typing import TYPE_CHECKING
 
 from AbstractResources import AbstractResources
-from Board import Board
 from Building import Building
 from Cult import Cult
-from Player import Player
 from Resources import Resources
 from Terrain import Terrain
-from Tile import Tile
-
 from errors import GameplayError, InvalidActionError
+
+if TYPE_CHECKING:
+    from Board import Board
+    from Player import Player
+    from Tile import Tile
 
 
 class Action(ABC):
@@ -17,7 +19,7 @@ class Action(ABC):
     _cost: Resources = Resources()
     _reward: Resources | AbstractResources = Resources()
 
-    def activate(self, board: Board, player: Player):
+    def activate(self, board: "Board", player: "Player"):
         if player.turns_credit <= 0:
             raise GameplayError("Player is out of actions")
         player.turns_credit -= self._time
@@ -31,10 +33,10 @@ class BonusAction(Action):
 
 
 class LocationSpecificAction(Action):
-    _location: Tile | None = None
+    _location: "Tile | None" = None
 
     @property
-    def location(self) -> Tile:
+    def location(self) -> "Tile":
         if self._location is None:
             raise InvalidActionError(
                 f"Location must be set for type {self.__class__.__name__}"
@@ -42,14 +44,14 @@ class LocationSpecificAction(Action):
         return self._location
 
     @location.setter
-    def location(self, tile: Tile) -> None:
+    def location(self, tile: "Tile") -> None:
         self._location = tile
 
 
 class FlyingAction(LocationSpecificAction):
     _distance = 1
 
-    def activate(self, board: Board, player: Player):
+    def activate(self, board: "Board", player: "Player"):
         # TODO: check distance from nearest building of same player
         player.build(self.location, Building.DWELLING)
         return super().activate(board, player)
@@ -71,7 +73,7 @@ class CultAction(Action):
     def cult(self, cult: Cult) -> None:
         self._cult = cult
 
-    def activate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         player.advance_in_cult(self.cult, self._value)
         return super().activate(board, player)
 
@@ -83,7 +85,7 @@ class SharedAction(Action):
     def available(self):
         return self._available
 
-    def activate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         self._available = False
         return super().activate(board, player)
 
@@ -127,25 +129,25 @@ class PlayPriestAction(Action):
 
 
 class FirePriestAction(PlayPriestAction):
-    def activate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         board.play_priest(player=player, cult=Cult.FIRE)
         return super().activate(board, player)
 
 
 class EarthPriestAction(PlayPriestAction):
-    def activate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         board.play_priest(player=player, cult=Cult.EARTH)
         return super().activate(board, player)
 
 
 class WaterPriestAction(PlayPriestAction):
-    def activate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         board.play_priest(player=player, cult=Cult.WATER)
         return super().activate(board, player)
 
 
 class AirPriestAction(PlayPriestAction):
-    def activate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         board.play_priest(player=player, cult=Cult.AIR)
         return super().activate(board, player)
 
@@ -178,7 +180,7 @@ class TerraformAndBuildAction(LocationSpecificAction):
     def building_goal(self, building_goal: Building) -> None:
         self._building_goal = building_goal
 
-    def activate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         player.terraform(self.location, self.terrain_goal)
         player.build(location=self.location, building=self.building_goal)
         return super().activate(board, player)
@@ -230,7 +232,7 @@ class GiantsStrongholdAction(LocationSpecificAction):
 
 
 class WitchesStrongholdAction(LocationSpecificAction):
-    def activate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         player.build(location=self.location, building=Building.DWELLING)
 
         return super().activate(board, player)
@@ -241,14 +243,14 @@ class AurenStrongholdAction(CultAction):
 
 
 class SwarmlingsStrongholdAction(LocationSpecificAction):
-    def activate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         player.build(location=self.location, building=Building.TRADING_HOUSE)
 
         return super().activate(board, player)
 
 
 class MermaidStrongholdBonusAction(BonusAction):
-    def activate(self, board: Board, player: Player):
+    def activate(self, board: "Board", player: "Player"):
         player.upgrade_shipping_level()
         return super().activate(board, player)
 
@@ -265,7 +267,7 @@ class FakirsStrongholdAction(FlyingAction):
 
 
 class NomadsStrongholdAction(LocationSpecificAction):
-    def activate(self, board: Board, player: Player):
+    def activate(self, board: "Board", player: "Player"):
         self.location.terraform(player.faction.terrain)
         return super().activate(board, player)
 
@@ -308,7 +310,7 @@ class AlchemistsPointBasicAction(BonusAction):
 
 
 class DarklingsStrongholdBonusAction(BonusAction):
-    def activate(self, board: Board, player: Player):
+    def activate(self, board: "Board", player: "Player"):
         workers_to_swap = min(player.resources.workers, 3)
         player.gain(workers=-workers_to_swap, priests=workers_to_swap)
         return super().activate(board, player)

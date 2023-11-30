@@ -1,27 +1,7 @@
 from abc import ABC
 from enum import Enum
 from typing import List, Type
-from Action import (
-    Action,
-    AurenStrongholdAction,
-    BonusAction,
-    ChaosMagicianStrongholdAction,
-    CultistsNeighbourBonusAction,
-    CultistsStrongholdBonusAction,
-    DarklingsStrongholdBonusAction,
-    DwarvesBasicAction,
-    DwarvesStrongholdAction,
-    FakirsBasicAction,
-    FakirsStrongholdAction,
-    GiantsStrongholdAction,
-    HalflingsStrongholdBonusAction,
-    MermaidStrongholdBonusAction,
-    NomadsStrongholdAction,
-    SwarmlingsStrongholdAction,
-    WitchesStrongholdAction,
-)
 from Building import Building
-from Player import Player
 
 from Resources import Resources
 from CultProgress import CultProgress
@@ -39,6 +19,8 @@ class FactionColour(Enum):
 
 
 class Faction(ABC):
+    from Action import Action, BonusAction
+
     name: str
     starting_resources = Resources(
         workers=3,
@@ -121,21 +103,11 @@ class Faction(ABC):
             return cls.sanctuary_cost
         raise ValueError(f"Unknown building type: {building}")
 
-    @classmethod
-    def handle_spade(cls, player: Player):
-        pass
-
-    @classmethod
-    def handle_town(cls, player: Player):
-        player.gain(cls.town_bonus)
-
-    @classmethod
-    def handle_end_of_round(cls, player: Player):
-        pass
-
 
 # Factions
 class ChaosMagicians(Faction):
+    from Action import ChaosMagicianStrongholdAction
+
     name = "Chaos Magicians"
     starting_resources = Resources(
         workers=4,
@@ -160,6 +132,8 @@ class ChaosMagicians(Faction):
 
 
 class Giants(Faction):
+    from Action import GiantsStrongholdAction
+
     name = "Giants"
     starting_cult = CultProgress(
         fire=1,
@@ -176,6 +150,8 @@ class Giants(Faction):
 
 
 class Auren(Faction):
+    from Action import AurenStrongholdAction
+
     name = "Auren"
     starting_cult = CultProgress(
         water=1,
@@ -191,6 +167,8 @@ class Auren(Faction):
 
 
 class Witches(Faction):
+    from Action import WitchesStrongholdAction
+
     name = "Witches"
     starting_cult = CultProgress(
         air=2,
@@ -204,6 +182,8 @@ class Witches(Faction):
 
 
 class Swarmlings(Faction):
+    from Action import SwarmlingsStrongholdAction
+
     name = "Swarmlings"
     starting_resources = Resources(
         workers=8,
@@ -244,6 +224,8 @@ class Swarmlings(Faction):
 
 
 class Mermaids(Faction):
+    from Action import MermaidStrongholdBonusAction
+
     name = "Mermaids"
     starting_resources = Resources(
         workers=3,
@@ -266,6 +248,8 @@ class Mermaids(Faction):
 
 
 class Fakirs(Faction):
+    from Action import FakirsBasicAction, FakirsStrongholdAction
+
     name = "Fakirs"
     starting_resources = Resources(
         workers=3,
@@ -289,6 +273,8 @@ class Fakirs(Faction):
 
 
 class Nomads(Faction):
+    from Action import NomadsStrongholdAction
+
     name = "Nomads"
     starting_resources = Resources(
         workers=2,
@@ -315,6 +301,8 @@ class Nomads(Faction):
 
 
 class Halflings(Faction):
+    from Action import HalflingsStrongholdBonusAction
+
     name = "Halflings"
     starting_resources = Resources(
         workers=3,
@@ -333,13 +321,10 @@ class Halflings(Faction):
 
     spade_upgrade_cost = Resources(workers=2, coins=1, priests=1)
 
-    @classmethod
-    def handle_spade(cls, player: Player):
-        player.gain(points=1)
-        return super().handle_spade(player)
-
 
 class Cultists(Faction):
+    from Action import CultistsStrongholdBonusAction, CultistsNeighbourBonusAction
+
     name = "Cultists"
     starting_cult = CultProgress(
         fire=1,
@@ -357,6 +342,8 @@ class Cultists(Faction):
 
 
 class Engineers(Faction):
+    from Action import EngineersBasicAction
+
     name = "Engineers"
     starting_resources = Resources(
         workers=2,
@@ -368,6 +355,7 @@ class Engineers(Faction):
     terrain = Terrain.MOUNTAIN
 
     base_income = Resources()
+    basic_actions = [EngineersBasicAction]
 
     dwelling_cost = Resources(workers=1, coins=1)
     dwelling_incomes = (
@@ -394,13 +382,10 @@ class Engineers(Faction):
 
     sanctuary_cost = Resources(workers=3, coins=6)
 
-    @classmethod
-    def handle_end_of_round(cls, player: Player):
-        # TODO: check for bridges
-        return super().handle_end_of_round(player)
-
 
 class Dwarves(Faction):
+    from Action import DwarvesBasicAction, DwarvesStrongholdAction
+
     name = "Dwarves"
     starting_cult = CultProgress(
         earth=2,
@@ -426,6 +411,8 @@ class Dwarves(Faction):
 
 
 class Alchemists(Faction):
+    from Action import AlchemistsCoinBasicAction, AlchemistsPointBasicAction
+
     name = "Alchemists"
     starting_cult = CultProgress(
         fire=1,
@@ -434,7 +421,7 @@ class Alchemists(Faction):
     colour = FactionColour.BLACK
     terrain = Terrain.SWAMP
 
-    basic_actions = []
+    basic_actions = [AlchemistsCoinBasicAction, AlchemistsPointBasicAction]
 
     trading_house_incomes = (
         Resources(power=1, coins=2),
@@ -445,14 +432,10 @@ class Alchemists(Faction):
 
     stronghold_income = Resources(coins=6)
 
-    @classmethod
-    def handle_spade(cls, player: Player):
-        if player.has_building(Building.STRONGHOLD):
-            player.gain(power=2)
-        return super().handle_spade(player)
-
 
 class Darklings(Faction):
+    from Action import DarklingsStrongholdBonusAction
+
     name = "Darklings"
     starting_resources = Resources(
         workers=1,

@@ -1,7 +1,7 @@
 from Building import Building
 from Cult import Cult
 from CultProgress import CultProgress
-from Faction import Faction
+from Faction import Alchemists, Faction
 from Resources import Resources, ResourcesType
 from Terrain import Terrain, calculate_spade_cost
 from Tile import Tile
@@ -104,11 +104,11 @@ class Player:
         self.shipping_level += 1
 
     def terraform(self, location: Tile, terrain_goal: Terrain) -> None:
-        spades_requierd = calculate_spade_cost(
+        spades_required = calculate_spade_cost(
             location.terrain,
             terrain_goal,
         )
-        worker_cost = spades_requierd * self.spades_level
+        worker_cost = spades_required * self.spades_level
         self.spend(Resources(workers=worker_cost))
         location.terraform(terrain_goal)
 
@@ -125,3 +125,8 @@ class Player:
                 return True
 
         return False
+
+    def trigger_spades(self, spade_count: int):
+        if self.faction == Alchemists and self.has_building(Building.STRONGHOLD):
+            self.gain(power=2 * spade_count)
+        self.gain(points=self.faction.spade_bonus_points)
