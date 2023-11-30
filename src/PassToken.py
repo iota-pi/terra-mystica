@@ -1,6 +1,8 @@
 from dataclasses import dataclass
+from typing import Type
 
 from AbstractResources import AbstractResources
+from Action import Action
 from Building import Building
 from Resources import Resources
 
@@ -11,5 +13,4 @@ class PassToken:
     bonus_points: int = 0
     income: Resources = Resources()
     abstract_resources: AbstractResources = AbstractResources()
-    # TODO add actions
-    # action: PlayerAction
+    action: Type[Action] | None = None

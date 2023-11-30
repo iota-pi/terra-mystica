@@ -1,38 +1,42 @@
 from abc import ABC
+from typing import TYPE_CHECKING
 
 from AbstractResources import AbstractResources
-from Board import Board
 from Building import Building
 from Cult import Cult
-from Player import Player
 from Resources import Resources
 from Terrain import Terrain
-from Tile import Tile
+from errors import GameplayError, InvalidActionError
 
-from errors import InvalidActionError
+if TYPE_CHECKING:
+    from Board import Board
+    from Player import Player
+    from Tile import Tile
 
 
 class Action(ABC):
-    time: int = 1
-    cost: Resources = Resources()
-    reward: Resources = Resources()
+    _time: int = 1
+    _cost: Resources = Resources()
+    _reward: Resources | AbstractResources = Resources()
 
-    def _validate_action(self) -> None:
-        pass
+    def activate(self, board: "Board", player: "Player"):
+        if player.turns_credit <= 0:
+            raise GameplayError("Player is out of actions")
+        player.turns_credit -= self._time
+        if isinstance(self._reward, Resources):
+            player.gain(self._reward - self._cost)
+        # TODO: handle abstract resources
 
-    def _actuate(self, board: Board, player: Player) -> None:
-        player.gain(self.reward - self.cost)
 
-    def activate(self, board: Board, player: Player):
-        self._validate_action()
-        self._actuate(board, player)
+class BonusAction(Action):
+    _time = 0
 
 
 class LocationSpecificAction(Action):
-    _location: Tile | None = None
+    _location: "Tile | None" = None
 
     @property
-    def location(self) -> Tile:
+    def location(self) -> "Tile":
         if self._location is None:
             raise InvalidActionError(
                 f"Location must be set for type {self.__class__.__name__}"
@@ -40,130 +44,273 @@ class LocationSpecificAction(Action):
         return self._location
 
     @location.setter
-    def location(self, tile: Tile) -> None:
+    def location(self, tile: "Tile") -> None:
         self._location = tile
 
 
-class SharedAction(Action):
-    available = True
+class FlyingAction(LocationSpecificAction):
+    _distance = 1
 
-    def _actuate(self, board: Board, player: Player) -> None:
-        self.available = False
-        return super()._actuate(board, player)
+    def activate(self, board: "Board", player: "Player"):
+        # TODO: check distance from nearest building of same player
+        player.build(self.location, Building.DWELLING)
+        return super().activate(board, player)
+
+
+class CultAction(Action):
+    _value: int = 1
+    _cult: Cult | None = None
+
+    @property
+    def cult(self) -> Cult:
+        if self._cult is None:
+            raise InvalidActionError(
+                f"Cult must be set for type {self.__class__.__name__}"
+            )
+        return self._cult
+
+    @cult.setter
+    def cult(self, cult: Cult) -> None:
+        self._cult = cult
+
+    def activate(self, board: "Board", player: "Player") -> None:
+        player.advance_in_cult(self.cult, self._value)
+        return super().activate(board, player)
+
+
+class SharedAction(Action):
+    _available = True
+
+    @property
+    def available(self):
+        return self._available
+
+    def activate(self, board: "Board", player: "Player") -> None:
+        self._available = False
+        return super().activate(board, player)
 
     def reset(self) -> None:
-        self.available = True
+        self._available = True
+
+
+class AnyTimeAction(Action):
+    _time = 0
 
 
 # Standard any-time actions
-class AnyTimeAction(Action):
-    time = 0
-
-
 class AnyTimeCoinAction(AnyTimeAction):
-    cost = Resources(power=1)
-    result = Resources(coins=1)
+    _cost = Resources(power=1)
+    _reward = Resources(coins=1)
 
 
 class AnyTimeWorkerAction(AnyTimeAction):
-    cost = Resources(power=3)
-    result = Resources(workers=1)
+    _cost = Resources(power=3)
+    _reward = Resources(workers=1)
 
 
 class AnyTimePriestAction(AnyTimeAction):
-    cost = Resources(power=5)
-    result = Resources(priests=1)
+    _cost = Resources(power=5)
+    _reward = Resources(priests=1)
+
+
+class AnyTimeDowngradePriest(AnyTimeAction):
+    _cost = Resources(priests=1)
+    _reward = Resources(workers=1)
+
+
+class AnyTimeDowngradeWorker(AnyTimeAction):
+    _cost = Resources(workers=1)
+    _reward = Resources(coins=1)
 
 
 # Standard turn actions
 class PlayPriestAction(Action):
-    cost = Resources(priests=1)
+    _cost = Resources(priests=1)
 
 
 class FirePriestAction(PlayPriestAction):
-    def _actuate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         board.play_priest(player=player, cult=Cult.FIRE)
-        return super()._actuate(board, player)
+        return super().activate(board, player)
 
 
 class EarthPriestAction(PlayPriestAction):
-    def _actuate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         board.play_priest(player=player, cult=Cult.EARTH)
-        return super()._actuate(board, player)
+        return super().activate(board, player)
 
 
 class WaterPriestAction(PlayPriestAction):
-    def _actuate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         board.play_priest(player=player, cult=Cult.WATER)
-        return super()._actuate(board, player)
+        return super().activate(board, player)
 
 
 class AirPriestAction(PlayPriestAction):
-    def _actuate(self, board: Board, player: Player) -> None:
+    def activate(self, board: "Board", player: "Player") -> None:
         board.play_priest(player=player, cult=Cult.AIR)
-        return super()._actuate(board, player)
+        return super().activate(board, player)
 
 
 class TerraformAndBuildAction(LocationSpecificAction):
-    terrain_goal: Terrain | None = None
-    building_goal: Building | None = None
+    _terrain_goal: Terrain | None = None
+    _building_goal: Building | None = None
 
-    def set_terrain_goal(self, terrain: Terrain) -> None:
-        self.terrain_goal = terrain
+    @property
+    def terrain_goal(self) -> Terrain:
+        if self._terrain_goal is None:
+            raise InvalidActionError(
+                f"Terrain goal must be set for type {self.__class__.__name__}"
+            )
+        return self._terrain_goal
 
-    def set_building_goal(self, building: Building) -> None:
-        self.building_goal = building
+    @terrain_goal.setter
+    def terrain_goal(self, terrain_goal: Terrain) -> None:
+        self._terrain_goal = terrain_goal
 
-    def _validate_action(self):
-        if self.terrain_goal is None and self.building_goal is None:
-            raise InvalidActionError()
+    @property
+    def building_goal(self) -> Building:
+        if self._building_goal is None:
+            raise InvalidActionError(
+                f"Building goal must be set for type {self.__class__.__name__}"
+            )
+        return self._building_goal
 
-        return super()._validate_action()
+    @building_goal.setter
+    def building_goal(self, building_goal: Building) -> None:
+        self._building_goal = building_goal
 
-    def _actuate(self, board: Board, player: Player) -> None:
-        if self.terrain_goal is not None:
-            player.terraform(self.location, self.terrain_goal)
+    def activate(self, board: "Board", player: "Player") -> None:
+        player.terraform(self.location, self.terrain_goal)
+        player.build(location=self.location, building=self.building_goal)
+        return super().activate(board, player)
 
-        if self.building_goal is not None:
-            player.build(location=self.location, building=self.building_goal)
 
-        return super()._actuate(board, player)
+# Action token actions
+class SingleSpadeAction(Action):
+    _reward = AbstractResources(spades_credit=1)
 
 
 # Shared board actions
 class BridgeAction(SharedAction):
-    cost = Resources(power=3)
-    result = AbstractResources(bridge_credit=1)
+    _cost = Resources(power=3)
+    _reward = AbstractResources(bridge_credit=1)
 
 
 class PriestAction(SharedAction):
-    cost = Resources(power=3)
-    result = Resources(priests=1)
+    _cost = Resources(power=3)
+    _reward = Resources(priests=1)
 
 
 class WorkersAction(SharedAction):
-    cost = Resources(power=4)
-    result = Resources(workers=2)
+    _cost = Resources(power=4)
+    _reward = Resources(workers=2)
 
 
 class CoinsAction(SharedAction):
-    cost = Resources(power=4)
-    result = Resources(coins=7)
+    _cost = Resources(power=4)
+    _reward = Resources(coins=7)
 
 
 class SpadeAction(SharedAction):
-    cost = Resources(power=4)
-    result = AbstractResources(spades_credit=1)
+    _cost = Resources(power=4)
+    _reward = AbstractResources(spades_credit=1)
 
 
 class DoubleSpadeAction(SharedAction):
-    cost = Resources(power=6)
-    result = AbstractResources(spades_credit=2)
+    _cost = Resources(power=6)
+    _reward = AbstractResources(spades_credit=2)
 
 
 # Cult-specific actions
-class WitchesAction(Action):
-    result = AbstractResources(dwelling_credit=1)
+class ChaosMagicianStrongholdAction(Action):
+    _time = -1
 
 
-# TODO
+class GiantsStrongholdAction(LocationSpecificAction):
+    _reward = AbstractResources(spades_credit=2)
+
+
+class WitchesStrongholdAction(LocationSpecificAction):
+    def activate(self, board: "Board", player: "Player") -> None:
+        player.build(location=self.location, building=Building.DWELLING)
+
+        return super().activate(board, player)
+
+
+class AurenStrongholdAction(CultAction):
+    _value = 2
+
+
+class SwarmlingsStrongholdAction(LocationSpecificAction):
+    def activate(self, board: "Board", player: "Player") -> None:
+        player.build(location=self.location, building=Building.TRADING_HOUSE)
+
+        return super().activate(board, player)
+
+
+class MermaidStrongholdBonusAction(BonusAction):
+    def activate(self, board: "Board", player: "Player"):
+        player.upgrade_shipping_level()
+        return super().activate(board, player)
+
+
+class FakirsBasicAction(FlyingAction):
+    _cost = Resources(priests=1)
+    _reward = Resources(points=4)
+
+
+class FakirsStrongholdAction(FlyingAction):
+    _cost = Resources(priests=1)
+    _reward = Resources(points=4)
+    _distance = 2
+
+
+class NomadsStrongholdAction(LocationSpecificAction):
+    def activate(self, board: "Board", player: "Player"):
+        self.location.terraform(player.faction.terrain)
+        return super().activate(board, player)
+
+
+class HalflingsStrongholdBonusAction(BonusAction):
+    _reward = AbstractResources(spades_credit=3)
+
+
+class CultistsStrongholdBonusAction(BonusAction):
+    _reward = Resources(points=7)
+
+
+class CultistsNeighbourBonusAction(CultAction, BonusAction):
+    pass
+
+
+class EngineersBasicAction(Action):
+    _cost = Resources(workers=2)
+    _reward = AbstractResources(bridge_credit=1)
+
+
+class DwarvesBasicAction(FlyingAction):
+    _cost = Resources(workers=2)
+    _reward = Resources(points=4)
+
+
+class DwarvesStrongholdAction(FlyingAction):
+    _cost = Resources(workers=1)
+    _reward = Resources(points=4)
+
+
+class AlchemistsCoinBasicAction(BonusAction):
+    _cost = Resources(points=1)
+    _reward = Resources(coins=1)
+
+
+class AlchemistsPointBasicAction(BonusAction):
+    _cost = Resources(coins=2)
+    _reward = Resources(points=1)
+
+
+class DarklingsStrongholdBonusAction(BonusAction):
+    def activate(self, board: "Board", player: "Player"):
+        workers_to_swap = min(player.resources.workers, 3)
+        player.gain(workers=-workers_to_swap, priests=workers_to_swap)
+        return super().activate(board, player)
