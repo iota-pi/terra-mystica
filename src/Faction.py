@@ -1,4 +1,6 @@
+from abc import ABC
 from enum import Enum
+from typing import List, Type
 from Building import Building
 
 from Resources import Resources
@@ -16,7 +18,9 @@ class FactionColour(Enum):
     BLACK = 7
 
 
-class Faction:
+class Faction(ABC):
+    from Action import Action, BonusAction
+
     name: str
     starting_resources = Resources(
         workers=3,
@@ -25,9 +29,9 @@ class Faction:
     )
     starting_cult: CultProgress
     starting_dwellings = 2
-    starting_shipping = 0
     colour: FactionColour
     terrain: Terrain
+    basic_actions: List[Type[Action]] = []
 
     base_income = Resources(workers=1)
 
@@ -62,19 +66,27 @@ class Faction:
     stronghold_cost = Resources(workers=4, coins=6)
     stronghold_income = Resources(power=2)
     stronghold_favour_tokens = 0
-    # TODO
-    # stronghold_action: PlayerAction
+    stronghold_action: Type[Action] | None = None
+    stronghold_once_off_action: Type[BonusAction] | None = None
 
     sanctuary_cost = Resources(workers=4, coins=6)
     sanctuary_income = Resources(priests=1)
     sanctuary_favour_tokens = 1
 
-    disable_shipping = False
     spade_upgrade_cost = Resources(workers=2, coins=5, priests=1)
     spade_max_upgrades = 2
+    spade_terraform_cost = 1
+    spade_track_disabled = False
+    spade_bonus_points = 0
 
-    # TODO
-    # extra cult abilities
+    shipping_upgrade_cost = Resources(priests=1, coins=4)
+    shipping_disabled = False
+    shipping_start_level = 0
+    shipping_max_level = 3
+
+    town_bonus = Resources()
+
+    neighbouring_dwelling_action: Type[BonusAction] | None = None
 
     @classmethod
     def get_building_cost(cls, building: Building):
@@ -92,7 +104,10 @@ class Faction:
         raise ValueError(f"Unknown building type: {building}")
 
 
+# Factions
 class ChaosMagicians(Faction):
+    from Action import ChaosMagicianStrongholdAction
+
     name = "Chaos Magicians"
     starting_resources = Resources(
         workers=4,
@@ -110,12 +125,15 @@ class ChaosMagicians(Faction):
 
     stronghold_cost = Resources(workers=4, coins=4)
     stronghold_income = Resources(workers=2)
+    stronghold_action = ChaosMagicianStrongholdAction
 
     sanctuary_cost = Resources(workers=4, coins=8)
     sanctuary_favour_tokens = 2
 
 
 class Giants(Faction):
+    from Action import GiantsStrongholdAction
+
     name = "Giants"
     starting_cult = CultProgress(
         fire=1,
@@ -125,9 +143,15 @@ class Giants(Faction):
     terrain = Terrain.WASTELAND
 
     stronghold_income = Resources(power=4)
+    stronghold_action = GiantsStrongholdAction
+
+    spade_terraform_cost = 2
+    spade_track_disabled = True
 
 
 class Auren(Faction):
+    from Action import AurenStrongholdAction
+
     name = "Auren"
     starting_cult = CultProgress(
         water=1,
@@ -137,11 +161,14 @@ class Auren(Faction):
     terrain = Terrain.FOREST
 
     stronghold_favour_tokens = 1
+    stronghold_action = AurenStrongholdAction
 
     sanctuary_cost = Resources(workers=4, coins=8)
 
 
 class Witches(Faction):
+    from Action import WitchesStrongholdAction
+
     name = "Witches"
     starting_cult = CultProgress(
         air=2,
@@ -149,8 +176,14 @@ class Witches(Faction):
     colour = FactionColour.GREEN
     terrain = Terrain.FOREST
 
+    stronghold_action = WitchesStrongholdAction
+
+    town_bonus = Resources(points=5)
+
 
 class Swarmlings(Faction):
+    from Action import SwarmlingsStrongholdAction
+
     name = "Swarmlings"
     starting_resources = Resources(
         workers=8,
@@ -182,12 +215,17 @@ class Swarmlings(Faction):
 
     stronghold_cost = Resources(workers=5, coins=8)
     stronghold_income = Resources(power=4)
+    stronghold_action = SwarmlingsStrongholdAction
 
     sanctuary_cost = Resources(workers=5, coins=8)
     sanctuary_income = Resources(priests=2)
 
+    town_bonus = Resources(workers=3)
+
 
 class Mermaids(Faction):
+    from Action import MermaidStrongholdBonusAction
+
     name = "Mermaids"
     starting_resources = Resources(
         workers=3,
@@ -197,16 +235,21 @@ class Mermaids(Faction):
     starting_cult = CultProgress(
         water=2,
     )
-    starting_shipping = 1
     colour = FactionColour.BLUE
     terrain = Terrain.LAKE
 
     stronghold_income = Resources(power=4)
+    stronghold_once_off_action = MermaidStrongholdBonusAction
 
     sanctuary_cost = Resources(workers=4, coins=8)
 
+    shipping_start_level = 1
+    shipping_max_level = 5
+
 
 class Fakirs(Faction):
+    from Action import FakirsBasicAction, FakirsStrongholdAction
+
     name = "Fakirs"
     starting_resources = Resources(
         workers=3,
@@ -219,15 +262,19 @@ class Fakirs(Faction):
     )
     colour = FactionColour.YELLOW
     terrain = Terrain.DESERT
+    basic_actions = [FakirsBasicAction]
 
     stronghold_cost = Resources(workers=4, coins=10)
     stronghold_income = Resources(priests=1)
+    stronghold_action = FakirsStrongholdAction
 
-    disable_shipping = True
+    shipping_disabled = True
     spade_max_upgrades = 1
 
 
 class Nomads(Faction):
+    from Action import NomadsStrongholdAction
+
     name = "Nomads"
     starting_resources = Resources(
         workers=2,
@@ -250,9 +297,12 @@ class Nomads(Faction):
     )
 
     stronghold_cost = Resources(workers=4, coins=8)
+    stronghold_action = NomadsStrongholdAction
 
 
 class Halflings(Faction):
+    from Action import HalflingsStrongholdBonusAction
+
     name = "Halflings"
     starting_resources = Resources(
         workers=3,
@@ -267,11 +317,14 @@ class Halflings(Faction):
     terrain = Terrain.FIELD
 
     stronghold_cost = Resources(workers=4, coins=8)
+    stronghold_once_off_action = HalflingsStrongholdBonusAction
 
     spade_upgrade_cost = Resources(workers=2, coins=1, priests=1)
 
 
 class Cultists(Faction):
+    from Action import CultistsStrongholdBonusAction, CultistsNeighbourBonusAction
+
     name = "Cultists"
     starting_cult = CultProgress(
         fire=1,
@@ -281,11 +334,16 @@ class Cultists(Faction):
     terrain = Terrain.FIELD
 
     stronghold_cost = Resources(workers=4, coins=8)
+    stronghold_once_off_action = CultistsStrongholdBonusAction
 
     sanctuary_cost = Resources(workers=4, coins=8)
 
+    neighbouring_dwelling_action = CultistsNeighbourBonusAction
+
 
 class Engineers(Faction):
+    from Action import EngineersBasicAction
+
     name = "Engineers"
     starting_resources = Resources(
         workers=2,
@@ -297,6 +355,7 @@ class Engineers(Faction):
     terrain = Terrain.MOUNTAIN
 
     base_income = Resources()
+    basic_actions = [EngineersBasicAction]
 
     dwelling_cost = Resources(workers=1, coins=1)
     dwelling_incomes = (
@@ -325,12 +384,16 @@ class Engineers(Faction):
 
 
 class Dwarves(Faction):
+    from Action import DwarvesBasicAction, DwarvesStrongholdAction
+
     name = "Dwarves"
     starting_cult = CultProgress(
         earth=2,
     )
     colour = FactionColour.GREY
     terrain = Terrain.MOUNTAIN
+
+    basic_actions = [DwarvesBasicAction]
 
     trading_house_incomes = (
         Resources(power=1, coins=3),
@@ -340,13 +403,39 @@ class Dwarves(Faction):
     )
 
     stronghold_cost = Resources(workers=4, coins=8)
+    stronghold_action = DwarvesStrongholdAction
 
     sanctuary_cost = Resources(workers=4, coins=8)
 
-    disable_shipping = True
+    shipping_disabled = True
+
+
+class Alchemists(Faction):
+    from Action import AlchemistsCoinBasicAction, AlchemistsPointBasicAction
+
+    name = "Alchemists"
+    starting_cult = CultProgress(
+        fire=1,
+        water=1,
+    )
+    colour = FactionColour.BLACK
+    terrain = Terrain.SWAMP
+
+    basic_actions = [AlchemistsCoinBasicAction, AlchemistsPointBasicAction]
+
+    trading_house_incomes = (
+        Resources(power=1, coins=2),
+        Resources(power=1, coins=2),
+        Resources(power=1, coins=3),
+        Resources(power=1, coins=4),
+    )
+
+    stronghold_income = Resources(coins=6)
 
 
 class Darklings(Faction):
+    from Action import DarklingsStrongholdBonusAction
+
     name = "Darklings"
     starting_resources = Resources(
         workers=1,
@@ -361,26 +450,9 @@ class Darklings(Faction):
     colour = FactionColour.BLACK
     terrain = Terrain.SWAMP
 
+    stronghold_once_off_action = DarklingsStrongholdBonusAction
+
     sanctuary_cost = Resources(workers=4, coins=10)
     sanctuary_income = Resources(priests=2)
 
     spade_max_upgrades = 0
-
-
-class Alchemists(Faction):
-    name = "Alchemists"
-    starting_cult = CultProgress(
-        fire=1,
-        water=1,
-    )
-    colour = FactionColour.BLACK
-    terrain = Terrain.SWAMP
-
-    trading_house_incomes = (
-        Resources(power=1, coins=2),
-        Resources(power=1, coins=2),
-        Resources(power=1, coins=3),
-        Resources(power=1, coins=4),
-    )
-
-    stronghold_income = Resources(coins=6)

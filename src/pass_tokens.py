@@ -1,4 +1,5 @@
 from AbstractResources import AbstractResources
+from Action import CultAction, SingleSpadeAction
 from Building import Building
 from Resources import Resources
 from PassToken import PassToken
@@ -35,10 +36,10 @@ PASS_TOKENS = [
     ),
     PassToken(
         income=Resources(coins=4),
-        # TODO cult action
+        action=CultAction,
     ),
     PassToken(
         income=Resources(coins=2),
-        # TODO spade action
+        action=SingleSpadeAction,
     ),
 ]
