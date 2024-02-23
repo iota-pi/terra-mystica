@@ -16,6 +16,7 @@ class Tile:
         self._terrain = terrain
         self._building = None
         self._faction = None
+        self._adjacency = None
 
     @property
     def terrain(self) -> Terrain:
@@ -27,7 +28,7 @@ class Tile:
 
     @property
     def adjacency(self) -> "Set[Tile]":
-        if self._adjacency == None:
+        if self._adjacency is None:
             raise InvalidActionError(
                 "Cannot check for a tile's adjacency while the game is still being set up"
             )
