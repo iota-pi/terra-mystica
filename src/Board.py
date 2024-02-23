@@ -58,6 +58,12 @@ class Board:
         else:
             raise ValueError("Unrecognised map style")
 
+    def calculate_adjacency_for_tiles(self):
+        for row in range(len(self.data)):
+            for tile in range(len(row)):
+                coords = (row, tile)
+                self.get(coords).adjacency = self.get_directly_adj(coords)
+
     def get_tiles_of_type(self, terrain_filter: Terrain):
         return_list = []
         for row in range(0, len(self.data)):
@@ -111,6 +117,14 @@ class Board:
     def get_indirectly_adj(
         self, start=(0, 0), terrain_filter=None, shipping_limit=0
     ) -> list:
+        tiles = tile.adjacency
+        if shipping_limit <= 0:
+            return tiles
+        all_tiles = set(tiles)
+        for next_tile in tiles:
+            all_tiles |= next_tile.adjacent
+        return all_tiles
+
         unfiltered_list = []
         if self.get_directly_adj(start, Terrain.RIVER) == []:
             return self.get_directly_adj(start, terrain_filter)
