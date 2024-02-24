@@ -52,18 +52,22 @@ FAVOUR_TOKENS = [
     ),
     FavourToken(
         cult_bonus=Cult.FIRE,
-        cult_value=1,
+        cult_value=3,
+        available=1,
     ),
     FavourToken(
         cult_bonus=Cult.WATER,
-        cult_value=1,
+        cult_value=3,
+        available=1,
     ),
     FavourToken(
         cult_bonus=Cult.EARTH,
-        cult_value=1,
+        cult_value=3,
+        available=1,
     ),
     FavourToken(
         cult_bonus=Cult.AIR,
-        cult_value=1,
+        cult_value=3,
+        available=1,
     ),
 ]

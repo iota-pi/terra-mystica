@@ -12,6 +12,7 @@ from Cult import Cult
 class FavourToken:
     cult_bonus: Cult
     cult_value: int = 0
+    available: int = 3
     pass_bonus_condition: Building | tuple[Building, Building] | None = None
     pass_bonus_points: int = 0
     build_bonus_condition: Building | tuple[Building, Building] | None = None
