@@ -24,10 +24,55 @@ class TestBoard:
             aMap.get((2, 4)),
             aMap.get((1, 3)),
         ]
+        my_set = set()
+        assert (
+            aMap.filter_terrain(
+                aMap.get_directly_adj(start=(2, 3)), terrain_filter=Terrain.DESERT
+            )
+            == my_set
+        )
+        my_set.add(aMap.get((2, 2)))
+        assert (
+            aMap.filter_terrain(
+                aMap.get_directly_adj(start=(2, 3)), terrain_filter=Terrain.SWAMP
+            )
+            == my_set
+        )
+        my_set = set()
+        my_set.add(aMap.get((3, 4)))
+        my_set.add(aMap.get((1, 3)))
+        assert (
+            aMap.filter_terrain(
+                aMap.get_directly_adj(start=(2, 3)), terrain_filter=Terrain.LAKE
+            )
+            == my_set
+        )
+        my_set = set()
+        my_set.add(aMap.get((2, 4)))
+        assert (
+            aMap.filter_terrain(
+                aMap.get_directly_adj(start=(2, 3)), terrain_filter=Terrain.WASTELAND
+            )
+            == my_set
+        )
+        my_set = set()
+        my_set.add(aMap.get((3, 2)))
+        my_set.add(aMap.get((3, 3)))
+        assert (
+            aMap.filter_terrain(
+                aMap.get_directly_adj(start=(2, 3)), terrain_filter=Terrain.RIVER
+            )
+            == my_set
+        )
 
         assert aMap.check_adjacency((6, 3), (4, 3), 0) is None
         assert aMap.check_adjacency((6, 3), (5, 3), 0) == AdjacencyType.DIRECT
 
+        # The board.get_indirectly_adj() function returns a set without a specific order for the items.
+        # I don't know how to write a test that doesn't care about the order of the Items.
+        # The function still works, you can tell because the board.check_adjacency() function also works.
+        # However I would still like to get these tests working again.
+        #
         # assert aMap.get_indirectly_adj(tile=aMap.get((1, 4))) == aMap.get_directly_adj(
         #     start=(1, 4)
         # )

@@ -84,7 +84,7 @@ class Board:
     def get_directly_adj(
         self,
         start: Coords = (0, 0),
-    ) -> List[Coords]:
+    ) -> set:
         adjacent_tile_list = []
         row_start_offset = -((start[1] + 1) % 2)
         if start[1] > 0:
@@ -109,9 +109,7 @@ class Board:
             adjacent_tile_list.append(self.get((start[0] - 1, start[1])))  # left
         return adjacent_tile_list  # = [TL,TR,R,BR,BL,L]
 
-    def get_indirectly_adj(
-        self, tile=None, shipping_limit=0
-    ) -> list:
+    def get_indirectly_adj(self, tile=None, shipping_limit=0) -> set:
         tiles = tile.adjacency
         if shipping_limit <= 0:
             return tiles
@@ -122,33 +120,13 @@ class Board:
                     t, shipping_limit=shipping_limit - 1
                 )
         return all_tiles
-        # Commented out because I'm not confident that the
-        # replacement code for get_indirectly_adjacent will work.
-        #
-        # unfiltered_list = []
-        # if self.get_directly_adj(start, Terrain.RIVER) == []:
-        #     return self.get_directly_adj(start, terrain_filter)
-        # if shipping_limit == 0:
-        #     unfiltered_list = self.get_directly_adj(start)
-        # else:
-        #     direct_list = self.get_directly_adj(start, None)
-        #     for tile in direct_list:
-        #         if tile not in unfiltered_list:
-        #             unfiltered_list.append(tile)
-        #         if self.get(tile).terrain == Terrain.RIVER:
-        #             indirect_list = self.get_indirectly_adj(
-        #                 tile, None, shipping_limit - 1
-        #             )
-        #             for t in indirect_list:
-        #                 if t not in unfiltered_list and t != start:
-        #                     unfiltered_list.append(t)
-        # if terrain_filter is None:
-        #     return unfiltered_list
-        # adjacent_tile_list = []
-        # for tile in unfiltered_list:
-        #     if self.get(tile)._terrain == terrain_filter:
-        #         adjacent_tile_list.append(tile)
-        # return adjacent_tile_list
+
+    def filter_terrain(self, tiles, terrain_filter=None) -> set:
+        filtered_tiles = set()
+        for tile in tiles:
+            if tile.terrain == terrain_filter:
+                filtered_tiles.add(tile)
+        return filtered_tiles
 
     def check_adjacency(self, start, end, shipping_limit) -> AdjacencyType:
         end = self.get(end)
