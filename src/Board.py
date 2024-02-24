@@ -85,7 +85,7 @@ class Board:
     def get_directly_adj(
         self,
         start: Coords = (0, 0),
-    ) -> set:
+    ) -> Set[Tile]:
         adjacent_tile_list = []
         row_start_offset = -((start[1] + 1) % 2)
         if start[1] > 0:
