@@ -11,3 +11,4 @@ class AbstractResources(ArithmeticEnabledDataclass):
     dwelling_credit: int = 0
     terraform_credit: int = 0
     shipping_bonus: int = 0
+    town_discount: bool = False

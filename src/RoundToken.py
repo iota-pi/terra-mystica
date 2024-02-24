@@ -8,7 +8,7 @@ from Resources import Resources
 
 @dataclass
 class RoundToken:
-    bonus_condition: Building | tuple[Building, Building] | AbstractResources
-    bonus_points: int
+    build_bonus_condition: Building | tuple[Building, Building] | AbstractResources
+    build_bonus_points: int
     cult_condition: CultProgress
     cult_reward: Resources | AbstractResources
