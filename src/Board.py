@@ -61,10 +61,11 @@ class Board:
 
     def calculate_adjacency_for_tiles(self):
         for row in range(len(self.data)):
-            for tile in range(len(self.data[row])):
-                coords = (tile, row)
-                if self.get(coords).terrain != Terrain.EMPTY:
-                    self.get(coords).adjacency = set(self.get_directly_adj(coords))
+            for col in range(len(self.data[row])):
+                coords = (col, row)
+                tile = self.get(coords)
+                if tile.terrain != Terrain.EMPTY:
+                    tile.adjacency = set(self.get_directly_adj(coords))
 
     def get_tiles_of_type(self, terrain_filter: Terrain):
         return_list = []
