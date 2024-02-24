@@ -110,13 +110,18 @@ class Board:
             adjacent_tile_set.add(self.get((start[0] - 1, start[1])))  # left
         return adjacent_tile_set
 
-    def get_indirectly_adj(self, tile: Tile, shipping_limit: int = 0) -> Set[Tile]:
+    def get_indirectly_adj(
+        self,
+        tile: Tile,
+        shipping_limit: int = 0,
+        flying: bool = False,
+    ) -> Set[Tile]:
         tiles = tile.adjacency
         if shipping_limit <= 0:
             return tiles
         all_tiles = set(tiles)
         for t in tiles:
-            if t.terrain == Terrain.RIVER:
+            if flying or t.terrain == Terrain.RIVER:
                 all_tiles |= self.get_indirectly_adj(
                     t, shipping_limit=shipping_limit - 1
                 )

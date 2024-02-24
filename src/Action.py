@@ -52,7 +52,21 @@ class FlyingAction(LocationSpecificAction):
     _distance = 1
 
     def activate(self, board: "Board", player: "Player"):
-        # TODO: check distance from nearest building of same player
+        adjacent = board.get_indirectly_adj(
+            self.location,
+            self._distance,
+            flying=True,
+        )
+        dwelling_in_range = any(
+            tile.building is not None and tile.faction == player.faction
+            for tile in adjacent
+        )
+        if not dwelling_in_range:
+            raise InvalidActionError(
+                "Cannot build on selected tile; "
+                "too far from the nearest building of the same player"
+            )
+
         player.build(self.location, Building.DWELLING)
         return super().activate(board, player)
 

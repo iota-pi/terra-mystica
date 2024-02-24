@@ -27,6 +27,10 @@ class Tile:
         return self._building
 
     @property
+    def faction(self) -> Type[Faction] | None:
+        return self._faction
+
+    @property
     def adjacency(self) -> "Set[Tile]":
         if self._adjacency is None:
             raise InvalidActionError(
