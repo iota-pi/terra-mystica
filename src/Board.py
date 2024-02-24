@@ -86,40 +86,41 @@ class Board:
         self,
         start: Coords = (0, 0),
     ) -> Set[Tile]:
-        adjacent_tile_list = []
+        adjacent_tile_set = set()
         row_start_offset = -((start[1] + 1) % 2)
         if start[1] > 0:
-            adjacent_tile_list.append(
+            adjacent_tile_set.add(
                 self.get((start[0] + row_start_offset, start[1] - 1))
             )  # top left
-            adjacent_tile_list.append(
+            adjacent_tile_set.add(
                 self.get((start[0] + row_start_offset + 1, start[1] - 1))
             )  # top right
         if start[0] < BOARD_WIDTH - 2 or (
             start[1] % 2 == 1 and start[0] < BOARD_WIDTH - 1
         ):
-            adjacent_tile_list.append(self.get((start[0] + 1, start[1])))  # right
+            adjacent_tile_set.add(self.get((start[0] + 1, start[1])))  # right
         if start[1] < BOARD_HEIGHT - 1:
-            adjacent_tile_list.append(
+            adjacent_tile_set.add(
                 self.get((start[0] + row_start_offset + 1, start[1] + 1))
             )  # bottom left
-            adjacent_tile_list.append(
+            adjacent_tile_set.add(
                 self.get((start[0] + row_start_offset, start[1] + 1))
             )  # bottom right
         if start[0] > 0:
-            adjacent_tile_list.append(self.get((start[0] - 1, start[1])))  # left
-        return adjacent_tile_list  # = [TL,TR,R,BR,BL,L]
+            adjacent_tile_set.add(self.get((start[0] - 1, start[1])))  # left
+        return adjacent_tile_set  # = [TL,TR,R,BR,BL,L]
 
     def get_indirectly_adj(self, tile=None, shipping_limit=0) -> set:
         tiles = tile.adjacency
         if shipping_limit <= 0:
             return tiles
-        all_tiles = set()
+        all_tiles = set(tiles)
         for t in tiles:
             if t.terrain == Terrain.RIVER:
                 all_tiles |= self.get_indirectly_adj(
                     t, shipping_limit=shipping_limit - 1
                 )
+        all_tiles.remove(tile)
         return all_tiles
 
     def filter_terrain(self, tiles: Set[Tile], terrain_filter=None) -> set:
