@@ -50,7 +50,6 @@ class TestBoard:
         assert aMap.get_indirectly_adj(tile=aMap.get((1, 4))) == aMap.get_directly_adj(
             start=(1, 4)
         )
-        print(str(aMap.get((2, 3))))
         assert aMap.get_indirectly_adj(tile=aMap.get((2, 3)), shipping_limit=1) == {
             aMap.get((2, 2)),
             aMap.get((3, 2)),
