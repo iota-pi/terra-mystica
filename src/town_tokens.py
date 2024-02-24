@@ -18,7 +18,7 @@ TOWN_TOKENS = [
     ),
     TownToken(
         points=8,
-        cult_reward=(Cult.FIRE,Cult.WATER,Cult.EARTH,Cult.AIR),
+        cult_reward=(Cult.FIRE, Cult.WATER, Cult.EARTH, Cult.AIR),
         cult_reward_value=1,
     ),
     TownToken(
