@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Set, Type
 from Building import Building
 from Faction import Faction
 from Terrain import Terrain
@@ -10,11 +10,13 @@ class Tile:
     _terrain: Terrain
     _building: Building | None
     _faction: Type[Faction] | None
+    _adjacency: "Set[Tile] | None"
 
     def __init__(self, terrain: Terrain) -> None:
         self._terrain = terrain
         self._building = None
         self._faction = None
+        self._adjacency = None
 
     @property
     def terrain(self) -> Terrain:
@@ -23,6 +25,18 @@ class Tile:
     @property
     def building(self) -> Building | None:
         return self._building
+
+    @property
+    def adjacency(self) -> "Set[Tile]":
+        if self._adjacency is None:
+            raise InvalidActionError(
+                "Cannot check for a tile's adjacency while the game is still being set up"
+            )
+        return self._adjacency
+
+    @adjacency.setter
+    def adjacency(self, tiles: "Set[Tile]") -> None:
+        self._adjacency = tiles
 
     def terraform(self, terrain_goal: Terrain) -> None:
         if self._building or self._faction:
