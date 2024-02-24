@@ -24,12 +24,12 @@ FAVOUR_TOKENS = [
         build_bonus_condition=Building.DWELLING,
         build_bonus_points=2,
     ),
-    FavourToken( # needs the non-linear point reward looked at
+    FavourToken(  # needs the non-linear point reward looked at
         cult_bonus=Cult.AIR,
         cult_value=1,
         pass_bonus_condition=Building.TRADING_HOUSE,
-        pass_bonus_points=1,
-    ), 
+        pass_bonus_points=1,  # 1 point per trading house +1 if you only have 1 or 2 trading houses
+    ),
     FavourToken(
         cult_bonus=Cult.FIRE,
         cult_value=2,
