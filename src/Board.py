@@ -1,6 +1,6 @@
 # import random
 # import math
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Set
 
 from Cult import Cult
 from errors import InvalidActionError
@@ -122,7 +122,7 @@ class Board:
                 )
         return all_tiles
 
-    def filter_terrain(self, tiles, terrain_filter=None) -> set:
+    def filter_terrain(self, tiles: Set[Tile], terrain_filter=None) -> set:
         filtered_tiles = set()
         for tile in tiles:
             if tile.terrain == terrain_filter:
@@ -130,10 +130,10 @@ class Board:
         return filtered_tiles
 
     def check_adjacency(self, start, end, shipping_limit) -> AdjacencyType:
-        end = self.get(end)
-        if end in self.get_directly_adj(start):
+        end_tile = self.get(end)
+        if end_tile in self.get_directly_adj(start):
             return AdjacencyType.DIRECT
-        if end in self.get_indirectly_adj(self.get(start), shipping_limit):
+        if end_tile in self.get_indirectly_adj(self.get(start), shipping_limit):
             return AdjacencyType.INDIRECT
         return None
 
