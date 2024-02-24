@@ -108,7 +108,7 @@ class Board:
             )  # bottom right
         if start[0] > 0:
             adjacent_tile_set.add(self.get((start[0] - 1, start[1])))  # left
-        return adjacent_tile_set  # = [TL,TR,R,BR,BL,L]
+        return adjacent_tile_set
 
     def get_indirectly_adj(self, tile=None, shipping_limit=0) -> set:
         tiles = tile.adjacency
