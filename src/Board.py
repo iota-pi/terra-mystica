@@ -86,7 +86,7 @@ class Board:
         self,
         start: Coords = (0, 0),
     ) -> Set[Tile]:
-        adjacent_tile_set = set()
+        adjacent_tile_set: Set[Tile] = set()
         row_start_offset = -((start[1] + 1) % 2)
         if start[1] > 0:
             adjacent_tile_set.add(
@@ -110,7 +110,7 @@ class Board:
             adjacent_tile_set.add(self.get((start[0] - 1, start[1])))  # left
         return adjacent_tile_set
 
-    def get_indirectly_adj(self, tile=None, shipping_limit=0) -> set:
+    def get_indirectly_adj(self, tile: Tile, shipping_limit: int = 0) -> Set[Tile]:
         tiles = tile.adjacency
         if shipping_limit <= 0:
             return tiles
@@ -123,14 +123,16 @@ class Board:
         all_tiles.remove(tile)
         return all_tiles
 
-    def filter_terrain(self, tiles: Set[Tile], terrain_filter=None) -> set:
-        filtered_tiles = set()
+    def filter_terrain(self, tiles: Set[Tile], terrain_filter: Terrain) -> Set[Tile]:
+        filtered_tiles: Set[Tile] = set()
         for tile in tiles:
             if tile.terrain == terrain_filter:
                 filtered_tiles.add(tile)
         return filtered_tiles
 
-    def check_adjacency(self, start, end, shipping_limit) -> AdjacencyType:
+    def check_adjacency(
+        self, start: Coords, end: Coords, shipping_limit: int
+    ) -> AdjacencyType | None:
         end_tile = self.get(end)
         if end_tile in self.get_directly_adj(start):
             return AdjacencyType.DIRECT

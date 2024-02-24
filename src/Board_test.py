@@ -6,15 +6,15 @@ from Terrain import Terrain
 class TestBoard:
     def test_adj(self):
         aMap = Board()
-        assert aMap.get((2, 3))._terrain == Terrain.DESERT
-        assert aMap.get((2, 2))._terrain == Terrain.SWAMP
-        assert aMap.get((3, 2))._terrain == Terrain.RIVER
-        assert aMap.get((3, 3))._terrain == Terrain.RIVER
-        assert aMap.get((3, 4))._terrain == Terrain.LAKE
-        assert aMap.get((2, 4))._terrain == Terrain.WASTELAND
-        assert aMap.get((1, 3))._terrain == Terrain.LAKE
-        assert aMap.get((6, 3))._terrain == Terrain.LAKE
-        assert aMap.get((7, 7))._terrain == Terrain.SWAMP
+        assert aMap.get((2, 3)).terrain == Terrain.DESERT
+        assert aMap.get((2, 2)).terrain == Terrain.SWAMP
+        assert aMap.get((3, 2)).terrain == Terrain.RIVER
+        assert aMap.get((3, 3)).terrain == Terrain.RIVER
+        assert aMap.get((3, 4)).terrain == Terrain.LAKE
+        assert aMap.get((2, 4)).terrain == Terrain.WASTELAND
+        assert aMap.get((1, 3)).terrain == Terrain.LAKE
+        assert aMap.get((6, 3)).terrain == Terrain.LAKE
+        assert aMap.get((7, 7)).terrain == Terrain.SWAMP
 
         assert aMap.get_directly_adj(start=(2, 3)) == {
             aMap.get((2, 2)),
@@ -24,12 +24,13 @@ class TestBoard:
             aMap.get((2, 4)),
             aMap.get((1, 3)),
         }
-        my_set = set()
         assert (
-            aMap.filter_terrain(
-                aMap.get_directly_adj(start=(2, 3)), terrain_filter=Terrain.DESERT
+            len(
+                aMap.filter_terrain(
+                    aMap.get_directly_adj(start=(2, 3)), terrain_filter=Terrain.DESERT
+                )
             )
-            == my_set
+            == 0
         )
         assert aMap.filter_terrain(
             aMap.get_directly_adj(start=(2, 3)), terrain_filter=Terrain.SWAMP
@@ -64,11 +65,13 @@ class TestBoard:
             aMap.get((1, 3)),
         }
         assert (
-            aMap.filter_terrain(
-                aMap.get_indirectly_adj(tile=aMap.get((2, 3))),
-                terrain_filter=Terrain.DESERT,
+            len(
+                aMap.filter_terrain(
+                    aMap.get_indirectly_adj(tile=aMap.get((2, 3))),
+                    terrain_filter=Terrain.DESERT,
+                )
             )
-            == my_set
+            == 0
         )
         assert aMap.filter_terrain(
             aMap.get_indirectly_adj(tile=aMap.get((2, 3)), shipping_limit=1),
@@ -104,7 +107,7 @@ class TestBoard:
 
     def test_start(self):
         aMap = Board()
-        assert aMap.get((2, 3))._terrain == Terrain.DESERT
+        assert aMap.get((2, 3)).terrain == Terrain.DESERT
         assert aMap.get_tiles_of_type(Terrain.LAKE) == [
             (3, 0),
             (10, 0),
