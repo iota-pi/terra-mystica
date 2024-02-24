@@ -68,7 +68,7 @@ class Board:
                     tile.adjacency = set(self.get_directly_adj(coords))
 
     def get_tiles_of_type(self, terrain_filter: Terrain):
-        return_list = []
+        return_list = set()
         for row in range(0, len(self.data)):
             for col in range(0, len(self.data[row])):
                 tile = (col, row)
@@ -76,7 +76,7 @@ class Board:
                 if tile_object.terrain == terrain_filter or (
                     terrain_filter is None and tile_object.terrain != Terrain.EMPTY
                 ):
-                    return_list.append(tile)
+                    return_list.add(tile_object)
         return return_list
 
     def get(self, coords: Coords):
