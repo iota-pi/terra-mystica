@@ -4,18 +4,8 @@ from Terrain import Terrain
 
 
 class TestBoard:
-    def test_adj(self):
+    def test_direct_adj(self):
         aMap = Board()
-        assert aMap.get((2, 3)).terrain == Terrain.DESERT
-        assert aMap.get((2, 2)).terrain == Terrain.SWAMP
-        assert aMap.get((3, 2)).terrain == Terrain.RIVER
-        assert aMap.get((3, 3)).terrain == Terrain.RIVER
-        assert aMap.get((3, 4)).terrain == Terrain.LAKE
-        assert aMap.get((2, 4)).terrain == Terrain.WASTELAND
-        assert aMap.get((1, 3)).terrain == Terrain.LAKE
-        assert aMap.get((6, 3)).terrain == Terrain.LAKE
-        assert aMap.get((7, 7)).terrain == Terrain.SWAMP
-
         assert aMap.get_directly_adj(start=(2, 3)) == {
             aMap.get((2, 2)),
             aMap.get((3, 2)),
@@ -24,6 +14,9 @@ class TestBoard:
             aMap.get((2, 4)),
             aMap.get((1, 3)),
         }
+
+    def test_filter_with_direct_adj(self):
+        aMap = Board()
         assert (
             len(
                 aMap.filter_terrain(
@@ -45,9 +38,13 @@ class TestBoard:
             aMap.get_directly_adj(start=(2, 3)), terrain_filter=Terrain.RIVER
         ) == {aMap.get((3, 2)), aMap.get((3, 3))}
 
+    def test_check_adj_with_direct_adj(self):
+        aMap = Board()
         assert aMap.check_adjacency((6, 3), (4, 3), 0) is None
         assert aMap.check_adjacency((6, 3), (5, 3), 0) == AdjacencyType.DIRECT
 
+    def test_indirect_adj(self):
+        aMap = Board()
         assert aMap.get_indirectly_adj(tile=aMap.get((1, 4))) == aMap.get_directly_adj(
             start=(1, 4)
         )
@@ -64,6 +61,9 @@ class TestBoard:
             aMap.get((2, 4)),
             aMap.get((1, 3)),
         }
+
+    def test_filter_with_indirect_adj(self):
+        aMap = Board()
         assert (
             len(
                 aMap.filter_terrain(
@@ -98,6 +98,8 @@ class TestBoard:
             terrain_filter=Terrain.MOUNTAIN,
         ) == {aMap.get((4, 2))}
 
+    def test_check_adj_with_indirect_adj(self):
+        aMap = Board()
         assert aMap.check_adjacency((7, 7), (9, 6), 0) == None
         assert aMap.check_adjacency((7, 7), (9, 6), 1) == AdjacencyType.INDIRECT
         assert aMap.check_adjacency((7, 7), (8, 3), 2) == None
@@ -105,70 +107,79 @@ class TestBoard:
         assert aMap.check_adjacency((7, 7), (8, 1), 4) == None
         assert aMap.check_adjacency((7, 7), (8, 1), 5) == AdjacencyType.INDIRECT
 
-    def test_start(self):
+    def test_init(self):
         aMap = Board()
         assert aMap.get((2, 3)).terrain == Terrain.DESERT
-        assert aMap.get_tiles_of_type(Terrain.LAKE) == [
-            (3, 0),
-            (10, 0),
-            (1, 3),
-            (6, 3),
-            (3, 4),
-            (12, 4),
-            (11, 6),
-            (1, 7),
-            (6, 7),
-            (3, 8),
-            (10, 8),
-        ]
-        assert aMap.get_tiles_of_type(Terrain.DESERT) == [
-            (4, 0),
-            (0, 1),
-            (7, 1),
-            (11, 1),
-            (2, 3),
-            (7, 4),
-            (4, 5),
-            (9, 6),
-            (12, 6),
-            (0, 7),
-            (6, 8),
-        ]
-        assert aMap.get_tiles_of_type(Terrain.RIVER) == [
-            (1, 1),
-            (2, 1),
-            (5, 1),
-            (6, 1),
-            (9, 1),
-            (10, 1),
-            (0, 2),
-            (1, 2),
-            (3, 2),
-            (5, 2),
-            (7, 2),
-            (9, 2),
-            (11, 2),
-            (12, 2),
-            (3, 3),
-            (4, 3),
-            (7, 3),
-            (9, 3),
-            (8, 4),
-            (9, 4),
-            (2, 5),
-            (3, 5),
-            (6, 5),
-            (7, 5),
-            (8, 5),
-            (0, 6),
-            (1, 6),
-            (2, 6),
-            (4, 6),
-            (6, 6),
-            (8, 6),
-            (3, 7),
-            (4, 7),
-            (5, 7),
-            (8, 7),
-            (9, 8),
-        ]
+        assert aMap.get((2, 2)).terrain == Terrain.SWAMP
+        assert aMap.get((3, 2)).terrain == Terrain.RIVER
+        assert aMap.get((3, 3)).terrain == Terrain.RIVER
+        assert aMap.get((3, 4)).terrain == Terrain.LAKE
+        assert aMap.get((2, 4)).terrain == Terrain.WASTELAND
+        assert aMap.get((1, 3)).terrain == Terrain.LAKE
+        assert aMap.get((6, 3)).terrain == Terrain.LAKE
+        assert aMap.get((7, 7)).terrain == Terrain.SWAMP
+        assert aMap.get((2, 3)).terrain == Terrain.DESERT
+        assert aMap.get_tiles_of_type(Terrain.LAKE) == {
+            aMap.get((3, 0)),
+            aMap.get((10, 0)),
+            aMap.get((1, 3)),
+            aMap.get((6, 3)),
+            aMap.get((3, 4)),
+            aMap.get((12, 4)),
+            aMap.get((11, 6)),
+            aMap.get((1, 7)),
+            aMap.get((6, 7)),
+            aMap.get((3, 8)),
+            aMap.get((10, 8)),
+        }
+        assert aMap.get_tiles_of_type(Terrain.DESERT) == {
+            aMap.get((4, 0)),
+            aMap.get((0, 1)),
+            aMap.get((7, 1)),
+            aMap.get((11, 1)),
+            aMap.get((2, 3)),
+            aMap.get((7, 4)),
+            aMap.get((4, 5)),
+            aMap.get((9, 6)),
+            aMap.get((12, 6)),
+            aMap.get((0, 7)),
+            aMap.get((6, 8)),
+        }
+        assert aMap.get_tiles_of_type(Terrain.RIVER) == {
+            aMap.get((1, 1)),
+            aMap.get((2, 1)),
+            aMap.get((5, 1)),
+            aMap.get((6, 1)),
+            aMap.get((9, 1)),
+            aMap.get((10, 1)),
+            aMap.get((0, 2)),
+            aMap.get((1, 2)),
+            aMap.get((3, 2)),
+            aMap.get((5, 2)),
+            aMap.get((7, 2)),
+            aMap.get((9, 2)),
+            aMap.get((11, 2)),
+            aMap.get((12, 2)),
+            aMap.get((3, 3)),
+            aMap.get((4, 3)),
+            aMap.get((7, 3)),
+            aMap.get((9, 3)),
+            aMap.get((8, 4)),
+            aMap.get((9, 4)),
+            aMap.get((2, 5)),
+            aMap.get((3, 5)),
+            aMap.get((6, 5)),
+            aMap.get((7, 5)),
+            aMap.get((8, 5)),
+            aMap.get((0, 6)),
+            aMap.get((1, 6)),
+            aMap.get((2, 6)),
+            aMap.get((4, 6)),
+            aMap.get((6, 6)),
+            aMap.get((8, 6)),
+            aMap.get((3, 7)),
+            aMap.get((4, 7)),
+            aMap.get((5, 7)),
+            aMap.get((8, 7)),
+            aMap.get((9, 8)),
+        }
