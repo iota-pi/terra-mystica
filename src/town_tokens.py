@@ -18,7 +18,7 @@ TOWN_TOKENS = [
     ),
     TownToken(
         points=8,
-        cult_reward=CultProgress(fire=1,water=1,earth=1,air=1),
+        cult_reward=CultProgress(fire=1, water=1, earth=1, air=1),
     ),
     TownToken(
         points=9,
