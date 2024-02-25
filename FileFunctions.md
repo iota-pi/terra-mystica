@@ -2,7 +2,7 @@
 Starts the game
 
 ## __init__.py
-Is empty, it needs to be there for the thing to work.
+Identifies directory as a python module, allowing imports from files in the directory
 
 ## util.py
 does some important dataclass stuff
