@@ -7,18 +7,18 @@ from PassToken import PassToken
 
 PASS_TOKENS = [
     PassToken(
-        bonus_condition=Building.DWELLING,
-        bonus_points=1,
+        pass_bonus_condition=Building.DWELLING,
+        pass_bonus_points=1,
         income=Resources(coins=2),
     ),
     PassToken(
-        bonus_condition=Building.TRADING_HOUSE,
-        bonus_points=2,
+        pass_bonus_condition=Building.TRADING_HOUSE,
+        pass_bonus_points=2,
         income=Resources(workers=1),
     ),
     PassToken(
-        bonus_condition=(Building.STRONGHOLD, Building.SANCTUARY),
-        bonus_points=4,
+        pass_bonus_condition=(Building.STRONGHOLD, Building.SANCTUARY),
+        pass_bonus_points=4,
         income=Resources(workers=2),
     ),
     PassToken(
