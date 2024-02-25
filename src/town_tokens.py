@@ -1,5 +1,5 @@
 from Resources import Resources
-from Cult import Cult
+from CultProgress import CultProgress
 from TownToken import TownToken
 
 
@@ -18,8 +18,7 @@ TOWN_TOKENS = [
     ),
     TownToken(
         points=8,
-        cult_reward=(Cult.FIRE, Cult.WATER, Cult.EARTH, Cult.AIR),
-        cult_reward_value=1,
+        cult_reward=CultProgress(fire=1,water=1,earth=1,air=1),
     ),
     TownToken(
         points=9,

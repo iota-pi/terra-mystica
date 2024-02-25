@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Cult import Cult
+from CultProgress import CultProgress
 from Resources import Resources
 
 
@@ -8,6 +8,5 @@ from Resources import Resources
 class TownToken:
     available_tokens: int = 2
     points: int = 0
-    cult_reward: tuple[Cult, Cult, Cult, Cult] | None = None
-    cult_reward_value: int = 0
+    cult_reward: CultProgress | None = None
     resource_bonus: Resources = Resources()
