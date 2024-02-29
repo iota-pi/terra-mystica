@@ -32,7 +32,7 @@ class OwnedToken:
 
 
 class Player:
-    tokens: Set[OwnedToken] | None = None
+    tokens: Set[OwnedToken] = set()
     resources: Resources
     faction: Type[Faction]
     cult_progress: CultProgress
@@ -144,3 +144,16 @@ class Player:
         if self.faction == Alchemists and self.has_building(Building.STRONGHOLD):
             self.gain(power=2 * spade_count)
         self.gain(points=self.faction.spade_bonus_points)
+        
+    def gain_token(self, newToken: OwnedToken):
+        if newToken == OwnedToken():
+            return
+        self.tokens.add(newToken)
+        
+    def loose_token(self, remove: OwnedToken):
+        if remove is OwnedToken():
+            return
+        if remove not in self.tokens:
+            raise(InvalidActionError("You cannot remove a token you do not have."))
+        else:
+            self.tokens.remove(remove)
