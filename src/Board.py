@@ -1,4 +1,4 @@
-# import random
+import random
 # import math
 from typing import Dict, List, Tuple, Set
 
@@ -7,12 +7,16 @@ from errors import InvalidActionError
 from Player import Player
 from Terrain import Terrain
 from Tile import Tile
+from RoundToken import RoundToken
+from round_tokens import ROUND_TOKENS
+from AbstractResources import AbstractResources
 from enum import Enum
 from board_layouts import DEFAULT_BOARD, LARGER_BOARD
 
 
 BOARD_WIDTH = 13
 BOARD_HEIGHT = 9
+NUMBER_OF_ROUNDS = 6
 Coords = Tuple[int, int]
 
 
@@ -29,8 +33,9 @@ class Board:
         Cult.AIR: 4,
     }
     data: List[List[Tile]]
+    rounds: List[RoundToken] = [ROUND_TOKENS[1]]*NUMBER_OF_ROUNDS
 
-    def __init__(self, style: str = "default", size: int = 5) -> None:
+    def __init__(self, style: str = "default", NumberOfPlayers: int = 5) -> None:
         # Commented out the following because it doesn't work with strict typechecking
         # extension = 0  # provision for games with more players
         # if size > 5:
@@ -49,15 +54,16 @@ class Board:
         #     self.data[8][-1] = 0
         # elif style == "default":
         if style == "default":
-            if size <= 5:
+            if NumberOfPlayers <= 5:
                 self.data = DEFAULT_BOARD
-            elif size <= 7:
+            elif NumberOfPlayers <= 7:
                 self.data = LARGER_BOARD
             else:
                 raise ValueError("There is no default board for that number of players")
         else:
             raise ValueError("Unrecognised map style")
         self.calculate_adjacency_for_tiles()
+        self.choose_round_tokens()
 
     def calculate_adjacency_for_tiles(self):
         for row in range(len(self.data)):
@@ -152,3 +158,17 @@ class Board:
         priest_points = 3 if self.priest_slots[cult] == 4 else 2
         self.priest_slots[cult] -= 1
         player.advance_in_cult(cult, priest_points)
+    
+    def choose_round_tokens(self):
+        RoundTokensWithoutSpades: List[RoundToken] = []
+        for token in ROUND_TOKENS:
+            if not(type(token.build_bonus_condition) == AbstractResources and token.build_bonus_condition.spades_credit > 1):
+                RoundTokensWithoutSpades.append(token)
+        for round in range(0, int(NUMBER_OF_ROUNDS/3)*2):
+            newToken = ROUND_TOKENS[random.randint(0,len(ROUND_TOKENS))]
+            if newToken not in self.rounds:
+                self.rounds[round] = newToken
+        for round in range(int(NUMBER_OF_ROUNDS/3)*2, NUMBER_OF_ROUNDS):
+            newToken = RoundTokensWithoutSpades[random.randint(0,len(RoundTokensWithoutSpades))]
+            if newToken not in self.rounds:
+                self.rounds[round] = newToken
