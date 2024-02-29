@@ -25,7 +25,6 @@ POWER_BONUSES = [
 
 @dataclass
 class Token:
-    Pass: PassToken | None = None
     Favour: Set[FavourToken] | None = None
     Town: Set[TownToken] | None = None
     Round: RoundToken | None = None
@@ -33,6 +32,8 @@ class Token:
 
 class Player:
     tokens: Set[Token] = set()
+    pass_token: PassToken | None = None
+    round_token: Token | None = None
     resources: Resources
     faction: Type[Faction]
     cult_progress: CultProgress
@@ -40,6 +41,7 @@ class Player:
     spades_level: int
     building_locations: Set[Tile]
     turns_credit: int = 0
+    passed: bool = False
 
     def __init__(self, faction: Type[Faction]) -> None:
         self.faction = faction
@@ -146,20 +148,24 @@ class Player:
         if self.faction == Alchemists and self.has_building(Building.STRONGHOLD):
             self.gain(power=2 * spade_count)
         self.gain(points=self.faction.spade_bonus_points)
-        
+
     def gain_token(self, newToken: Token):
         if newToken == Token():
             return
         self.tokens.add(newToken)
-        
+
     def loose_token(self, remove: Token):
         if remove is Token():
             return
         if remove not in self.tokens:
-            raise(InvalidActionError("You cannot remove a token you do not have."))
+            raise (InvalidActionError("You cannot remove a token you do not have."))
         else:
             self.tokens.remove(remove)
 
     def choose_favour_token(self):
         # TODO: Select a favour token that is available and I don't own
         return Token()
+
+    def end_round(self):  # pass was a keyword
+        # TODO: get data from the board
+        return
