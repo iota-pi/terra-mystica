@@ -11,6 +11,7 @@ from Tile import Tile
 from RoundToken import RoundToken
 from round_tokens import ROUND_TOKENS
 from PassToken import PassToken
+
 # from pass_tokens import PASS_TOKENS
 from AbstractResources import AbstractResources
 from enum import Enum
@@ -172,18 +173,42 @@ class Board:
                 and token.build_bonus_condition.spades_credit > 1
             ):
                 RoundTokensWithoutSpades.append(token)
-        for round in range(0, int(NUMBER_OF_ROUNDS / 3) * 2):
-            newToken = ROUND_TOKENS[random.randint(0, len(ROUND_TOKENS) - 1)]
-            if newToken not in self.rounds:
-                self.rounds[round] = newToken
-        for round in range(int(NUMBER_OF_ROUNDS / 3) * 2, NUMBER_OF_ROUNDS):
-            newToken = RoundTokensWithoutSpades[
+        self.rounds.append(ROUND_TOKENS[random.randint(0, len(ROUND_TOKENS) - 1)])
+        self.rounds.append(ROUND_TOKENS[random.randint(0, len(ROUND_TOKENS) - 1)])
+        self.rounds.append(ROUND_TOKENS[random.randint(0, len(ROUND_TOKENS) - 1)])
+        self.rounds.append(ROUND_TOKENS[random.randint(0, len(ROUND_TOKENS) - 1)])
+        self.rounds.append(
+            RoundTokensWithoutSpades[
                 random.randint(0, len(RoundTokensWithoutSpades) - 1)
             ]
-            if newToken not in self.rounds:
-                self.rounds[round] = newToken
+        )
+        self.rounds.append(
+            RoundTokensWithoutSpades[
+                random.randint(0, len(RoundTokensWithoutSpades) - 1)
+            ]
+        )
+        #               This was supposed to allow for a non-standard number of rounds:
+        # round = 0
+        # while round < int(NUMBER_OF_ROUNDS / 3) * 2:
+        #     newToken = ROUND_TOKENS[random.randint(0, len(ROUND_TOKENS) - 1)]
+        #     if newToken not in self.rounds:
+        #         self.rounds.append(newToken)
+        #         round += 1
+        #     else:
+        #         round -= 1
+        # while round < NUMBER_OF_ROUNDS:
+        #     newToken = RoundTokensWithoutSpades[
+        #         random.randint(0, len(RoundTokensWithoutSpades) - 1)
+        #     ]
+        #     if newToken not in self.rounds:
+        #         self.rounds.append(newToken)
+        #         round += 1
+        #     else:
+        #         round -= 1
 
     def randomise_pass_tokens(self, NumberOfPlayers: int):
+        #               This got an "unhashable type: PassToken" error:
+        #               This adds random items to the set:
         # iterator = 0
         # while iterator < NumberOfPlayers + 3:
         #     token = PASS_TOKENS[random.randint(0, len(PASS_TOKENS))]
@@ -192,4 +217,19 @@ class Board:
         #         iterator += 1
         #     else:
         #         iterator -= 1
+        #
+        #               So I tried this way instead, but it got the same error:
+        #               This removes random items from a copy of the list:
+        # number_of_pass_tokens = NumberOfPlayers + 3
+        # remove_pass_tokens = len(PASS_TOKENS) - number_of_pass_tokens
+        # pass_token_list = PASS_TOKENS
+        # counter = 0
+        # while counter < remove_pass_tokens:
+        #     token = PASS_TOKENS[random.randint(0, len(PASS_TOKENS))]
+        #     pass_token_list.remove(token)
+        #     counter += 1
+        # for token in pass_token_list:
+        #     self.pass_token_selection.add(token)
+        #
+        #               But neither of them worked.
         return
