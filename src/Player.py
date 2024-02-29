@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from Building import Building
 from Cult import Cult
 from CultProgress import CultProgress
@@ -5,6 +6,10 @@ from Faction import Alchemists, Faction
 from Resources import Resources, ResourcesType
 from Terrain import Terrain, calculate_spade_cost
 from Tile import Tile
+from PassToken import PassToken
+from FavourToken import FavourToken
+from TownToken import TownToken
+from RoundToken import RoundToken
 
 from errors import GameplayError, InsufficientResourcesError, InvalidActionError
 from typing import Set, Type, Unpack
@@ -18,7 +23,16 @@ POWER_BONUSES = [
 ]
 
 
+@dataclass
+class OwnedToken:
+    Pass: PassToken | None = None
+    Favour: Set[FavourToken] | None = None
+    Town: Set[TownToken] | None = None
+    Round: RoundToken | None = None
+
+
 class Player:
+    tokens: Set[OwnedToken] | None = None
     resources: Resources
     faction: Type[Faction]
     cult_progress: CultProgress
