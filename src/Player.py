@@ -24,7 +24,7 @@ POWER_BONUSES = [
 
 
 @dataclass
-class OwnedToken:
+class Token:
     Pass: PassToken | None = None
     Favour: Set[FavourToken] | None = None
     Town: Set[TownToken] | None = None
@@ -32,7 +32,7 @@ class OwnedToken:
 
 
 class Player:
-    tokens: Set[OwnedToken] = set()
+    tokens: Set[Token] = set()
     resources: Resources
     faction: Type[Faction]
     cult_progress: CultProgress
@@ -132,6 +132,8 @@ class Player:
         self.spend(building_cost)
         location.build(new_building=building, faction=self.faction)
         self.building_locations.add(location)
+        if building is Building.TEMPLE or building is Building.SANCTUARY:
+            self.gain_token(self.choose_favour_token())
 
     def has_building(self, building: Building) -> bool:
         for tile in self.building_locations:
@@ -145,15 +147,19 @@ class Player:
             self.gain(power=2 * spade_count)
         self.gain(points=self.faction.spade_bonus_points)
         
-    def gain_token(self, newToken: OwnedToken):
-        if newToken == OwnedToken():
+    def gain_token(self, newToken: Token):
+        if newToken == Token():
             return
         self.tokens.add(newToken)
         
-    def loose_token(self, remove: OwnedToken):
-        if remove is OwnedToken():
+    def loose_token(self, remove: Token):
+        if remove is Token():
             return
         if remove not in self.tokens:
             raise(InvalidActionError("You cannot remove a token you do not have."))
         else:
             self.tokens.remove(remove)
+
+    def choose_favour_token(self):
+        # TODO: Select a favour token that is available and I don't own
+        return Token()
