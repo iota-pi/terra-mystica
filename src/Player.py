@@ -25,14 +25,15 @@ POWER_BONUSES = [
 
 @dataclass
 class Token:
-    Favour: Set[FavourToken] | None = None
-    Town: Set[TownToken] | None = None
+    Pass: PassToken | None = None
+    Favour: FavourToken | None = None
+    Town: TownToken | None = None
     Round: RoundToken | None = None
 
 
 class Player:
     tokens: Set[Token] = set()
-    pass_token: PassToken | None = None
+    pass_token: Token | None = None
     round_token: Token | None = None
     resources: Resources
     faction: Type[Faction]
@@ -129,7 +130,10 @@ class Player:
         location.terraform(terrain_goal)
 
     def build(self, location: Tile, building: Building) -> None:
-        # TODO: check player hasn't exceeded maximum building numbers
+        if self.count_built_buildings_of_type(
+            building
+        ) >= self.max_built_buildings_of_type(building):
+            raise InvalidActionError("You have none of those buildings left to build")
         building_cost = self.faction.get_building_cost(building)
         self.spend(building_cost)
         location.build(new_building=building, faction=self.faction)
@@ -141,7 +145,6 @@ class Player:
         for tile in self.building_locations:
             if tile.building == building:
                 return True
-
         return False
 
     def trigger_spades(self, spade_count: int):
@@ -158,7 +161,7 @@ class Player:
         if remove is Token():
             return
         if remove not in self.tokens:
-            raise (InvalidActionError("You cannot remove a token you do not have."))
+            raise InvalidActionError("You cannot remove a token you do not have.")
         else:
             self.tokens.remove(remove)
 
@@ -166,6 +169,59 @@ class Player:
         # TODO: Select a favour token that is available and I don't own
         return Token()
 
-    def end_round(self):  # pass was a keyword
-        # TODO: get data from the board
+    def income(self):
+        number_of_dwellings = self.count_built_buildings_of_type(Building.DWELLING)
+        for spot in self.faction.dwelling_incomes:
+            if number_of_dwellings > 0:
+                self.gain(spot)
+                number_of_dwellings -= 1
+        number_of_trading_houses = self.count_built_buildings_of_type(Building.TRADING_HOUSE)
+        for spot in self.faction.trading_house_incomes:
+            if number_of_trading_houses > 0:
+                self.gain(spot)
+                number_of_trading_houses -= 1
+        number_of_temples = self.count_built_buildings_of_type(Building.TEMPLE)
+        for spot in self.faction.temple_incomes:
+            if number_of_temples > 0:
+                self.gain(spot)
+                number_of_temples -= 1
+        number_of_sancturies = self.count_built_buildings_of_type(Building.SANCTUARY)
+        if number_of_sancturies > 0:
+            self.gain(self.faction.sanctuary_income)
+        number_of_strongholds = self.count_built_buildings_of_type(Building.STRONGHOLD)
+        if number_of_strongholds > 0:
+            self.gain(self.faction.stronghold_income)
+        
+        for token in self.tokens:
+            if token.Favour:
+                if token.Favour.income is tuple[Resources, Resources]:
+                    self.gain(token.Favour.income[0])
+                    self.gain(token.Favour.income[1])
+                elif token.Favour.income is Resources:
+                    self.gain(token.Favour.income)
+        
+        if self.pass_token and self.pass_token.Pass and self.pass_token.Pass.income:
+            self.gain(self.pass_token.Pass.income)
         return
+
+    def count_built_buildings_of_type(self, building_filter: Building) -> int:
+        count = 0
+        for location in self.building_locations:
+            if location.building == building_filter:
+                count += 1
+        return count
+
+    def max_built_buildings_of_type(self, building_filter: Building) -> int:
+        if building_filter == Building.DWELLING:
+            count = 8
+        elif building_filter == Building.TRADING_HOUSE:
+            count = 4
+        elif building_filter == Building.TEMPLE:
+            count = 3
+        elif building_filter == Building.SANCTUARY:
+            count = 1
+        elif building_filter == Building.STRONGHOLD:
+            count = 1
+        else:
+            raise ValueError
+        return count
