@@ -175,7 +175,9 @@ class Player:
             if number_of_dwellings > 0:
                 self.gain(spot)
                 number_of_dwellings -= 1
-        number_of_trading_houses = self.count_built_buildings_of_type(Building.TRADING_HOUSE)
+        number_of_trading_houses = self.count_built_buildings_of_type(
+            Building.TRADING_HOUSE
+        )
         for spot in self.faction.trading_house_incomes:
             if number_of_trading_houses > 0:
                 self.gain(spot)
@@ -191,7 +193,7 @@ class Player:
         number_of_strongholds = self.count_built_buildings_of_type(Building.STRONGHOLD)
         if number_of_strongholds > 0:
             self.gain(self.faction.stronghold_income)
-        
+
         for token in self.tokens:
             if token.Favour:
                 if token.Favour.income is tuple[Resources, Resources]:
@@ -199,7 +201,7 @@ class Player:
                     self.gain(token.Favour.income[1])
                 elif token.Favour.income is Resources:
                     self.gain(token.Favour.income)
-        
+
         if self.pass_token and self.pass_token.Pass and self.pass_token.Pass.income:
             self.gain(self.pass_token.Pass.income)
         return
