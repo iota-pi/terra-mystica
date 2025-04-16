@@ -7,7 +7,7 @@ from Building import Building
 from Resources import Resources
 
 
-@dataclass
+@dataclass(frozen=True)
 class PassToken:
     pass_bonus_condition: Building | tuple[Building, Building] | None = None
     pass_bonus_points: int = 0
